@@ -1,0 +1,91 @@
+# HaoNick 4.1.3 by Haoshoku
+# Support: https://haoshoku.xyz/go/discord
+
+# %line% for new line
+
+messages:
+  prefix: '&5HaoNick &8|&7'
+  no_player: 'You must be a player to execute this command!'
+  join_reset: '%prefix% &cYour fake uuid and your tag have been reset because a player with the same uuid joined the server'
+  nick_data_kept: '%prefix% &aYour name is &e%name%'
+  join_message: '%prefix% &c%player% &ajoined the game'
+  quit_message: '%prefix% &c%player% &aleft the game'
+  commands:
+    nick_module:
+      no_permission_player: '%prefix% &cYou do not have the permission to use the nick module'
+      usage: '%prefix% &e/nick <Name> %line% %prefix% &e/nick <Player> <Name> %line% %prefix% &e/nick reset'
+      cooldown: '%prefix% &cPlease wait 5 seconds until you are using this command again'
+      nick_exists: '%prefix% &cThe nick %name% is already being used'
+      blacklist: '%prefix% &cThis name is blacklisted'
+      min_length: '%prefix% &cThis name is too short'
+      # For the player himself messages
+      player_reset: '%prefix% &aYou successfully reset your name'
+      player_nicks: '%prefix% &aYour new name is now &e%name%'
+      # Player nicks another player messages
+      no_permission_target: '%prefix% &cYou do not have the permissions to rename other players'
+      target_not_online: '%prefix% &cThis player is not online'
+      player_resets_target: '%prefix% &aYou successfully reset &e%target% &aname'
+      target_gets_reset: '%prefix% &cYour nickname has been reset by &e%sender%'
+      player_nicks_target: '%prefix% &aYou successfully changed the name of &e%target% &ato &e%name%'
+      target_gets_nicked: '%prefix% &aYour name has been changed by &e%sender% &ato &e%name%'
+    nick_list_module:
+      no_permission_player: '%prefix% &cYou do not have the permission having a look at the nick list'
+      nobody_is_nicked: '%prefix% &cNobody is nicked!'
+      head_line: '%prefix% &eNick-List:'
+      message: '&c%original_name% &8-> &a%nicked_name%'
+    nick_reload_module:
+      no_permission_player: '%prefix% &cYou do not have the permission to reload the config'
+      reload_done: '%prefix% &aThe configuration has been reloaded successfully'
+    random_nick_module:
+      no_permission_player: '%prefix% &cYou do not have the permission to use the random module'
+      usage: '%prefix% &e/random <Name> %line% %prefix% &e/random <Player> <Name> %line% %prefix% &e/random reset'
+      cooldown: '%prefix% &cPlease wait 5 seconds until you are using this command again'
+      no_names_available: '%prefix% &cNo randomnames available'
+      # For the player himself messages
+      player_reset: '%prefix% &aYou successfully reset your name'
+      player_nicks: '%prefix% &aYour new name is now &e%name%'
+      # Player nicks another player messages
+      no_permission_target: '%prefix% &cYou do not have the permissions to rename other players'
+      target_not_online: '%prefix% &cThis player is not online'
+      player_resets_target: '%prefix% &aYou successfully reset &e%target% &aname'
+      target_gets_reset: '%prefix% &cYour nickname has been reset by &e%sender%'
+      player_nicks_target: '%prefix% &aYou successfully changed the name of &e%target% &ato &e%name%'
+      target_gets_nicked: '%prefix% &aYour name has been changed by &e%sender% &ato &e%name%'
+    skin_module:
+      no_permission_player: '%prefix% &cYou do not have the permission to use the skin module'
+      usage: '%prefix% &e/skin <Name> %line% %prefix% &e/skin <Player> <Name> %line% %prefix% &e/skin reset'
+      cooldown: '%prefix% &cPlease wait 5 seconds until you are using this command again'
+      blacklist: '%prefix% &cThis name is blacklisted'
+      # For the player himself messages
+      player_reset: '%prefix% &aYou successfully reset your skin'
+      player_changes_skin: '%prefix% &aYour new skin is now &e%name%'
+      # Player nicks another player messages
+      no_permission_target: '%prefix% &cYou do not have the permissions to rename other players'
+      target_not_online: '%prefix% &cThis player is not online'
+      player_resets_target: '%prefix% &aYou successfully reset &e%target% &askin'
+      target_gets_reset: '%prefix% &cYour skin has been reset by &e%sender%'
+      player_changes_skin_target: '%prefix% &aYou successfully changed the skin of &e%target% &ato &e%name%'
+      target_gets_skin_changed: '%prefix% &aYour skin has been changed by &e%sender% &ato &e%name%'
+    unnick_module:
+      no_permission_player: '%prefix% &cYou do not have the permission to use the unnick module'
+      usage: '%prefix% &e/unnick {Player}'
+      cooldown: '%prefix% &cPlease wait 5 seconds until you are using this command again'
+      # For the player himself messages
+      player_reset: '%prefix% &aYou successfully reset your name'
+      # Player nicks another player messages
+      no_permission_target: '%prefix% &cYou do not have the permissions to rename other players'
+      target_not_online: '%prefix% &cThis player is not online'
+      player_resets_target: '%prefix% &aYou successfully reset &e%target% &aname'
+      target_gets_reset: '%prefix% &cYour nickname has been reset by &e%sender%'
+    fake_rank_module:
+      no_permission_player: '%prefix% &cYou do not have the permission to use the fake rank module'
+      usage: '%prefix% &aThese fake ranks are available after being nicked: %line% &7- &e%fake_ranks% %line% &aWrite &e/fakerank <rank> &ato set your fake rank!'
+      cooldown: '%prefix% &cPlease wait 5 seconds until you are using this command again'
+      rank_not_exist: '%prefix% &cThis fake rank does not exist'
+      rank_updated: '%prefix% &aYour fake rank has been updated'
+      rank_no_permission: '%prefix% &cYou do not have the permissions to give yourself this rank'
+      no_permission_target: '%prefix% &cYou do not have the permissions to change fake rank of other players'
+      target_not_online: '%prefix% &cThis player is not online'
+      player_changes_target: '%prefix% &aSuccessfully changed fake rank of &e%target%'
+      target_gets_changed: '%prefix% &cYour fake rank has been updated'
+

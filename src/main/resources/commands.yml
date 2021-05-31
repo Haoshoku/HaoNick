@@ -1,0 +1,136 @@
+# HaoNick 4.1.3 by Haoshoku
+# Support: https://haoshoku.xyz/go/discord
+# HaoNick do register its commands dynamically. If you want to rename the commands, feel free to do that!
+
+
+commands:
+  # Settings for /nick
+  nick_module:
+    command: nick
+    command_permission: 'haonick.nick'
+    cooldown_bypass_permission: 'haonick.nick.bypass'
+    change_another_player_permission: 'haonick.nick.others'
+    min_length: 3
+    cooldown: 5
+    uuid: true
+    tag: true
+    skin: false
+    game_profile_change: false
+    description: 'Change your player tag and uuid'
+    usage: '/nick <Name>'
+    aliases:
+      - changenick
+    reset_args:
+      - reset
+      - 'off'
+      - clear
+      - unnick
+    blacklist:
+      - Notch
+      - Haoshoku
+    blacklist_contains_check: false
+  # Settings for /nicklist
+  nick_list_module:
+    command: nicklist
+    command_permission: 'haonick.nicklist'
+    description: 'List up all names'
+    usage: '/nicklist'
+    aliases:
+      - nlist
+  # Settings for /nickreload
+  nick_reload_module:
+    command: nickreload
+    command_permission: 'haonick.nickreload'
+    description: 'Reload the config'
+    usage: '/nickreload'
+    aliases:
+      - nreload
+  # Settings for /skin
+  skin_module:
+    command: skin
+    command_permission: 'haonick.skin'
+    cooldown_bypass_permission: 'haonick.skin.bypass'
+    change_another_player_permission: 'haonick.skin.others'
+    cooldown: 5
+    uuid: false
+    tag: false
+    skin: true
+    game_profile_change: false
+    nick_exists_check: false
+    description: 'Change your skin'
+    usage: '/skin <Name>'
+    aliases:
+      - changeskin
+    reset_args:
+      - reset
+      - 'off'
+      - clear
+      - unskin
+    blacklist:
+      - Notch
+      - Haoshoku
+  # Settings for /unnick
+  unnick_module:
+    command: unnick
+    command_permission: 'haonick.unnick'
+    cooldown_bypass_permission: 'haonick.unnick.bypass'
+    change_another_player_permission: 'haonick.unnick.others'
+    cooldown: 5
+    description: 'Change your player tag and uuid'
+    usage: '/unnick <Name>'
+    aliases:
+      - unnickplayer
+  # Settings /randomnick
+  random_nick_module:
+    command: randomnick
+    command_permission: 'haonick.randomnick'
+    cooldown_bypass_permission: 'haonick.randomnick.bypass'
+    change_another_player_permission: 'haonick.randomnick.others'
+    cooldown: 5
+    uuid: true
+    tag: true
+    skin: true
+    game_profile_change: false
+    description: 'Gives yourself a random nick'
+    usage: '/randomnick <Name>'
+    # If you set always_new_name to true, you won't be unnicked if you write /randomnick while being nicked
+    always_new_name: false
+    aliases:
+      - random
+    reset_args:
+      - reset
+      - 'off'
+      - clear
+      - unnick
+    random_names:
+      - RandomNick1
+      - RandomNick2
+      - RandomNick3
+      - RandomNick4
+      - RandomNick5
+      - RandomNick6
+      - RandomNick7
+      - RandomNick8
+      - RandomNick9
+      - RandomNick10
+      - RandomNick11
+      - RandomNick12
+      - RandomNick13
+      - RandomNick14
+      - RandomNick15
+      - RandomNick16
+      - RandomNick17
+      - RandomNick18
+      - RandomNick19
+      - RandomNick20
+  fake_rank_module:
+    command: fakerank
+    command_permission: 'haonick.fakerank'
+    cooldown_bypass_permission: 'haonick.fakerank.bypass'
+    change_another_player_permission: 'haonick.fakerank.others'
+    cooldown: 5
+    description: 'Set a fake rank'
+    usage: '/fakerank <rank>'
+    aliases:
+      - setrank
+      - setfakerank

@@ -1,0 +1,7 @@
+name: HaoNick
+version: 4.1.3
+author: Haoshoku
+description: A well made NickPlugin
+softdepend: [NickAPI, PlaceholderAPI]
+api-version: 1.13
+main: xyz.haoshoku.haonick.HaoNick

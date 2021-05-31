@@ -1,0 +1,59 @@
+# HaoNick 4.1.3 by Haoshoku
+# Support: https://haoshoku.xyz/go/discord
+# If you want to use the integrated prefix/suffix system of HaoNick, do not forget to activate it here.
+
+# Set it to true if you want to use the fake_rank {prefix+suffix} from HaoNick!
+fake_ranks_settings:
+  chat: true
+  tab: true
+
+# Explantation of rank system of HaoNick:
+# You can just copy a rank block and paste it again with a different name.
+# If you want to have a sorted scoreboard, be sure to make an order in the "name" of tab entry of each rank.
+# Example: 003mvp is above 004mvp
+#
+# Important: You need to set a COLOR if you are using 1.13 or HIGHER.
+# Take a look here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/ChatColor.html
+# You see there colors like RED, GRAY. Write these colors in the uppercase in the color entry if you want to use it.
+# Only one color can be used!
+
+# Each rank has its own permission. Just give the specific rank the permission!
+# If you have a permission plugins that allows you to give '*' permission, just set the permissions of OTHER
+# ranks to false (- permission).
+
+
+fake_ranks:
+  mvp:
+    display_name: '&bMVP'
+    permission: 'haonick.fakerank.mvp'
+    chat:
+      message: '&b&lMVP &b%name%&f: %message%'
+      chatcolor: true
+    tab:
+      name: '001mvp'
+      prefix: '&b&lMVP &9'
+      suffix: ''
+      color: 'AQUA'
+  vip:
+    display_name: '&6VIP'
+    permission: 'haonick.fakerank.vip'
+    chat:
+      message: '&6&lVIP+ &6%name%&f: %message%'
+      chatcolor: true
+    tab:
+      name: '002vip'
+      prefix: '&6&lVIP &9'
+      suffix: ''
+      color: 'GOLD'
+  normal:
+    display_name: '&9Normal'
+    permission: 'haonick.fakerank.normal'
+    default: true
+    chat:
+      message: '&9%name%&f: %message%'
+      chatcolor: false
+    tab:
+      name: '003normal'
+      prefix: '&9'
+      suffix: ''
+      color: 'BLUE'
