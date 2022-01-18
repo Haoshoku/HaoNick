@@ -64,154 +64,168 @@ public class ScoreboardHandling {
             PlayerScoreboard playerScoreboard = ScoreboardHandling.PLAYER_SCOREBOARD_MAP.get( player.getUniqueId() );
 
             {
-                Map<String, Object[]> playerWeightMap = new HashMap<>();
-                List<String> defaultPlayersList = new ArrayList<>();
-                String defaultRank = null;
-                String defaultRankWeight = "99";
+                boolean ranksActiveTab = ranksConfig.getBoolean( "ranks_settings.tab" );
+                boolean ranksActiveChat = ranksConfig.getBoolean( "ranks_settings.chat" );
 
-                if ( ranksConfig.getSection( "ranks" ) != null ) {
-                    for( String rank : ranksConfig.getSection( "ranks" ).getKeys( false ) ) {
-                        String weight = ranksConfig.getString( "ranks." + rank + ".tab.weight" );
+                if ( ranksActiveChat || ranksActiveTab ) {
+                    Map<String, Object[]> playerWeightMap = new HashMap<>();
+                    List<String> defaultPlayersList = new ArrayList<>();
+                    String defaultRank = null;
+                    String defaultRankWeight = "99";
 
-                        if ( ranksConfig.getBoolean( "ranks." + rank + ".default" ) ) {
-                            defaultRank = rank;
-                            defaultRankWeight = ranksConfig.getString( "ranks." + rank + ".tab.weight" );
+                    if ( ranksConfig.getSection( "ranks" ) != null ) {
+                        for( String rank : ranksConfig.getSection( "ranks" ).getKeys( false ) ) {
+                            String weight = ranksConfig.getString( "ranks." + rank + ".tab.weight" );
+
+                            if ( ranksConfig.getBoolean( "ranks." + rank + ".default" ) ) {
+                                defaultRank = rank;
+                                defaultRankWeight = ranksConfig.getString( "ranks." + rank + ".tab.weight" );
+                            }
+
+                            for ( Player online : Bukkit.getOnlinePlayers() ) {
+                                if ( online.hasPermission( ranksConfig.getConfig().getString( "ranks." + rank + ".permission" ) ) && !playerWeightMap.containsKey( NickAPI.getOriginalName( online ) ) ) {
+                                    playerWeightMap.put( NickAPI.getOriginalName( online ), new Object[] { rank, weight } );
+                                    if ( ranksActiveTab ) ScoreboardHandling.setPlayerListName( online, false, rank );
+                                }
+                            }
                         }
 
                         for ( Player online : Bukkit.getOnlinePlayers() ) {
-                            if ( online.hasPermission( ranksConfig.getConfig().getString( "ranks." + rank + ".permission" ) ) && !playerWeightMap.containsKey( NickAPI.getOriginalName( online ) ) ) {
-                                playerWeightMap.put( NickAPI.getOriginalName( online ), new Object[] { rank, weight } );
-                                ScoreboardHandling.setPlayerListName( online, false, rank );
+                            if ( !playerWeightMap.containsKey( NickAPI.getOriginalName( online ) ) )
+                                defaultPlayersList.add( NickAPI.getOriginalName( online ) );
+                        }
+
+                        for ( Map.Entry<String, Object[]> entry : playerWeightMap.entrySet() ) {
+                            String playerName = entry.getKey();
+                            String rank = (String) entry.getValue()[0];
+                            String weight = (String) entry.getValue()[1];
+                            HaoUserHandler.getUser( NickAPI.getPlayerOfOriginalName( playerName ) ).setRank( rank );
+                            if ( !ranksActiveTab ) continue;
+                            ScoreboardHandling.generateScoreboardData( player, weight, playerName, playerScoreboard, ranksConfig, rank );
+                        }
+
+                        for ( String defaultPlayer : defaultPlayersList ) {
+                            if ( defaultRank == null ) {
+                                ErrorUtils.err( "§cDefault rank does not exist in ranks.yml. Select a rank in ranks.yml and add default: true as an entry" );
+                                break;
                             }
+                            HaoUserHandler.getUser( NickAPI.getPlayerOfOriginalName( defaultPlayer ) ).setRank( defaultRank );
+
+                            if ( !ranksActiveTab ) continue;
+                            ScoreboardHandling.generateScoreboardData( player, defaultRankWeight, defaultPlayer, playerScoreboard, ranksConfig, defaultRank );
+                            ScoreboardHandling.setPlayerListName( NickAPI.getPlayerOfOriginalName( defaultPlayer ), false, defaultRank );
                         }
-                    }
-
-                    for ( Player online : Bukkit.getOnlinePlayers() ) {
-                        if ( !playerWeightMap.containsKey( NickAPI.getOriginalName( online ) ) )
-                            defaultPlayersList.add( NickAPI.getOriginalName( online ) );
-                    }
-
-                    for ( Map.Entry<String, Object[]> entry : playerWeightMap.entrySet() ) {
-                        String playerName = entry.getKey();
-                        String rank = (String) entry.getValue()[0];
-                        String weight = (String) entry.getValue()[1];
-                        HaoUserHandler.getUser( NickAPI.getPlayerOfOriginalName( playerName ) ).setRank( rank );
-                        if ( !ranksConfig.getBoolean( "ranks_settings.tab" ) ) continue;
-                        ScoreboardHandling.generateScoreboardData( player, weight, playerName, playerScoreboard, ranksConfig, rank );
-                    }
-
-                    for ( String defaultPlayer : defaultPlayersList ) {
-                        if ( defaultRank == null ) {
-                            ErrorUtils.err( "§cDefault rank does not exist in ranks.yml. Select a rank in ranks.yml and add default: true as an entry" );
-                            break;
-                        }
-                        HaoUserHandler.getUser( NickAPI.getPlayerOfOriginalName( defaultPlayer ) ).setRank( defaultRank );
-
-                        if ( !ranksConfig.getBoolean( "ranks_settings.tab" ) ) continue;
-                        ScoreboardHandling.generateScoreboardData( player, defaultRankWeight, defaultPlayer, playerScoreboard, ranksConfig, defaultRank );
-                        ScoreboardHandling.setPlayerListName( NickAPI.getPlayerOfOriginalName( defaultPlayer ), false, defaultRank );
                     }
                 }
-
             }
 
-            Collection<String> nickedNames = NickAPI.getNickedPlayers().values();
+            {
+                boolean fakeRanksActiveTab = fakeRanksConfig.getBoolean( "fake_ranks_settings.tab" );
+                boolean fakeRanksActiveChat = fakeRanksConfig.getBoolean( "fake_ranks_settings.chat" );
 
-            for ( String name : nickedNames ) {
-                Player online = NickAPI.getPlayerOfNickedName( name );
-                if ( online == null || !online.isOnline() ) continue;
-                HaoUser user = HaoUserHandler.getUser( online );
+                if ( fakeRanksActiveChat || fakeRanksActiveTab ) {
+                    Collection<String> nickedNames = NickAPI.getNickedPlayers().values();
 
-                String scoreboardName = null;
-                String defaultRank = null;
-                String defaultRankWeight = "99";
+                    for ( String name : nickedNames ) {
+                        Player online = NickAPI.getPlayerOfNickedName( name );
+                        if ( online == null || !online.isOnline() ) continue;
+                        HaoUser user = HaoUserHandler.getUser( online );
 
-                for ( String fakeRank : fakeRanksConfig.getSection( "fake_ranks" ).getKeys( false ) ) {
-                    if ( fakeRanksConfig.getBoolean( "fake_ranks." + fakeRank + ".default" ) ) {
-                        defaultRank = fakeRank;
-                        defaultRankWeight = fakeRanksConfig.getString( "fake_ranks." + fakeRank + ".tab.weight" );
-                    }
-                }
+                        String scoreboardName = null;
+                        String defaultRank = null;
+                        String defaultRankWeight = "99";
 
-                boolean permissionBased = HaoNick.getPlugin().getConfigManager().getSettingsConfig().getBoolean( "settings.tab.fake_ranks_permission_based" );
-                boolean rankReceived = false;
-                boolean errorSent = false;
+                        for ( String fakeRank : fakeRanksConfig.getSection( "fake_ranks" ).getKeys( false ) ) {
+                            if ( fakeRanksConfig.getBoolean( "fake_ranks." + fakeRank + ".default" ) ) {
+                                defaultRank = fakeRank;
+                                defaultRankWeight = fakeRanksConfig.getString( "fake_ranks." + fakeRank + ".tab.weight" );
+                            }
+                        }
 
-                if ( fakeRanksConfig.getSection( "fake_ranks" ) != null ) {
-                    for ( String fakeRank : fakeRanksConfig.getSection( "fake_ranks" ).getKeys( false ) ) {
-                        if ( permissionBased ) {
-                            if ( online.hasPermission( fakeRanksConfig.getConfig().getString( "fake_ranks." + fakeRank + ".permission" ) ) && !rankReceived ) {
+                        boolean permissionBased = HaoNick.getPlugin().getConfigManager().getSettingsConfig().getBoolean( "settings.tab.fake_ranks_permission_based" );
+                        boolean rankReceived = false;
+                        boolean errorSent = false;
+
+                        if ( fakeRanksConfig.getSection( "fake_ranks" ) != null ) {
+                            for ( String fakeRank : fakeRanksConfig.getSection( "fake_ranks" ).getKeys( false ) ) {
+                                if ( permissionBased ) {
+                                    if ( online.hasPermission( fakeRanksConfig.getConfig().getString( "fake_ranks." + fakeRank + ".permission" ) ) && !rankReceived ) {
+                                        user.setFakeRank( fakeRank );
+                                        rankReceived = true;
+                                    }
+                                }
+                                if ( user.getFakeRank() == null )
+                                    continue;
+
+                                if ( user.getFakeRank() != null && !user.getFakeRank().equalsIgnoreCase( fakeRank ) && fakeRanksConfig.getConfig().getString( "fake_ranks." + user.getFakeRank() ) != null )
+                                    continue;
+
+                                user.setFakeRankLoop( true );
+                                scoreboardName = fakeRanksConfig.getString( "fake_ranks." + fakeRank + ".tab.weight" ) + name.hashCode();
+                                if ( scoreboardName.length() > 16 )
+                                    scoreboardName = scoreboardName.substring( 0, 16 );
+
+                                String prefix = ScoreboardHandling.getTabEntry( online, fakeRanksConfig, "fake_ranks." + fakeRank + ".tab.prefix" );
+                                String suffix = ScoreboardHandling.getTabEntry( online, fakeRanksConfig, "fake_ranks." + fakeRank + ".tab.suffix" );
+                                online.setDisplayName( prefix + NickAPI.getName( online ) + suffix );
+                                ScoreboardHandling.applyScoreboardData( player, scoreboardName, fakeRank, prefix, suffix, fakeRanksConfig );
                                 user.setFakeRank( fakeRank );
-                                rankReceived = true;
+                            }
+
+                            if ( !user.isFakeRankLoop() && defaultRank != null ) {
+                                scoreboardName = defaultRankWeight + name.hashCode();
+
+                                if ( scoreboardName.length() > 16 )
+                                    scoreboardName = scoreboardName.substring( 0, 16 );
+
+                                String prefix = ScoreboardHandling.getTabEntry( online, fakeRanksConfig, "fake_ranks." + defaultRank + ".tab.prefix" );
+                                String suffix = ScoreboardHandling.getTabEntry( online, fakeRanksConfig, "fake_ranks." + defaultRank + ".tab.suffix" );
+                                online.setDisplayName( prefix + NickAPI.getName( online ) + suffix );
+                                ScoreboardHandling.applyScoreboardData( player, scoreboardName, defaultRank, prefix, suffix, fakeRanksConfig );
+                                user.setFakeRank( defaultRank );
+
+                            } else if ( defaultRank == null ) {
+                                errorSent = true;
+                                ErrorUtils.err( "§cDefault rank in §efake_ranks.yml §cdoes not exist! Set it by selecting a fake rank and add §edefault: true §cinto its data." );
+                            }
+
+                            if ( user.getFakeRank() != null && !user.getFakeRank().equals( "" ) && scoreboardName != null ) {
+                                Object scoreboardTeam = playerScoreboard.getScoreboardTeam( scoreboardName );
+
+                                try {
+                                    Collection<String> collection;
+
+                                    if ( ScoreboardHandling.VERSION.equalsIgnoreCase( "v1_18_R1" ) )
+                                        collection = (Collection<String>) scoreboardTeam.getClass().getMethod( "g" ).invoke( scoreboardTeam );
+                                    else
+                                        collection = (Collection<String>) scoreboardTeam.getClass().getMethod( "getPlayerNameSet" ).invoke( scoreboardTeam );
+
+                                    collection.add( NickAPI.getName( online ) );
+                                } catch ( Exception e ) {
+                                    e.printStackTrace();
+                                }
+
+
+                                if ( !fakeRanksActiveTab ) continue;
+
+                                Object packet1 = ScoreboardHandling.getPacketPlayOutScoreboardTeamPacket( scoreboardTeam, 1 );
+                                Object packet2 = ScoreboardHandling.getPacketPlayOutScoreboardTeamPacket( scoreboardTeam, 0 );
+
+                                ScoreboardHandling.sendPacket( player, packet1 );
+                                ScoreboardHandling.sendPacket( player, packet2 );
+                                ScoreboardHandling.setPlayerListName( user.getPlayer(), true, user.getFakeRank() );
+                            } else {
+                                if ( !errorSent )
+                                    ErrorUtils.err( "Error code 1337 - This error shouldn't happen. Please report it!" );
                             }
                         }
-                        if ( user.getFakeRank() == null )
-                            continue;
 
-                        if ( user.getFakeRank() != null && !user.getFakeRank().equalsIgnoreCase( fakeRank ) && fakeRanksConfig.getConfig().getString( "fake_ranks." + user.getFakeRank() ) != null )
-                            continue;
-
-                        user.setFakeRankLoop( true );
-                        scoreboardName = fakeRanksConfig.getString( "fake_ranks." + fakeRank + ".tab.weight" ) + name.hashCode();
-                        if ( scoreboardName.length() > 16 )
-                            scoreboardName = scoreboardName.substring( 0, 16 );
-
-                        String prefix = ScoreboardHandling.getTabEntry( online, fakeRanksConfig, "fake_ranks." + fakeRank + ".tab.prefix" );
-                        String suffix = ScoreboardHandling.getTabEntry( online, fakeRanksConfig, "fake_ranks." + fakeRank + ".tab.suffix" );
-                        online.setDisplayName( prefix + NickAPI.getName( online ) + suffix );
-                        ScoreboardHandling.applyScoreboardData( player, scoreboardName, fakeRank, prefix, suffix, fakeRanksConfig );
-                        user.setFakeRank( fakeRank );
-                    }
-
-                    if ( !user.isFakeRankLoop() && defaultRank != null ) {
-                        scoreboardName = defaultRankWeight + name.hashCode();
-
-                        if ( scoreboardName.length() > 16 )
-                            scoreboardName = scoreboardName.substring( 0, 16 );
-
-                        String prefix = ScoreboardHandling.getTabEntry( online, fakeRanksConfig, "fake_ranks." + defaultRank + ".tab.prefix" );
-                        String suffix = ScoreboardHandling.getTabEntry( online, fakeRanksConfig, "fake_ranks." + defaultRank + ".tab.suffix" );
-                        online.setDisplayName( prefix + NickAPI.getName( online ) + suffix );
-                        ScoreboardHandling.applyScoreboardData( player, scoreboardName, defaultRank, prefix, suffix, fakeRanksConfig );
-                        user.setFakeRank( defaultRank );
-
-                    } else if ( defaultRank == null ) {
-                        errorSent = true;
-                        ErrorUtils.err( "§cDefault rank in §efake_ranks.yml §cdoes not exist! Set it by selecting a fake rank and add §edefault: true §cinto its data." );
-                    }
-
-                    if ( user.getFakeRank() != null && !user.getFakeRank().equals( "" ) && scoreboardName != null ) {
-                        Object scoreboardTeam = playerScoreboard.getScoreboardTeam( scoreboardName );
-
-                        try {
-                            Collection<String> collection;
-
-                            if ( ScoreboardHandling.VERSION.equalsIgnoreCase( "v1_18_R1" ) )
-                                collection = (Collection<String>) scoreboardTeam.getClass().getMethod( "g" ).invoke( scoreboardTeam );
-                            else
-                                collection = (Collection<String>) scoreboardTeam.getClass().getMethod( "getPlayerNameSet" ).invoke( scoreboardTeam );
-
-                            collection.add( NickAPI.getName( online ) );
-                        } catch ( Exception e ) {
-                            e.printStackTrace();
-                        }
-
-
-                        if ( !fakeRanksConfig.getBoolean( "fake_ranks_settings.tab" ) ) continue;
-
-                        Object packet1 = ScoreboardHandling.getPacketPlayOutScoreboardTeamPacket( scoreboardTeam, 1 );
-                        Object packet2 = ScoreboardHandling.getPacketPlayOutScoreboardTeamPacket( scoreboardTeam, 0 );
-
-                        ScoreboardHandling.sendPacket( player, packet1 );
-                        ScoreboardHandling.sendPacket( player, packet2 );
-                        ScoreboardHandling.setPlayerListName( user.getPlayer(), true, user.getFakeRank() );
-                    } else {
-                        if ( !errorSent )
-                            ErrorUtils.err( "Error code 1337 - This error shouldn't happen. Please report it!" );
                     }
                 }
 
+
             }
+
 
         }
     }
