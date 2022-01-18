@@ -7,8 +7,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import xyz.haoshoku.haonick.HaoNick;
 import xyz.haoshoku.haonick.config.HaoConfig;
-import xyz.haoshoku.haonick.manager.HaoUserManager;
+import xyz.haoshoku.haonick.handler.HaoUserHandler;
+import xyz.haoshoku.haonick.scoreboard.ScoreboardHandling;
 import xyz.haoshoku.haonick.user.HaoUser;
+import xyz.haoshoku.haonick.util.ErrorUtils;
+import xyz.haoshoku.haonick.util.MsgUtils;
 import xyz.haoshoku.haonick.util.NickUtils;
 import xyz.haoshoku.haonick.util.TabUtils;
 import xyz.haoshoku.nick.api.NickAPI;
@@ -26,21 +29,23 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onJoin( PlayerJoinEvent event ) {
         Player player = event.getPlayer();
-        HaoUser user = HaoUserManager.getUser( player );
+        HaoUser user = HaoUserHandler.getUser( player );
 
         if ( this.plugin.getConfigManager().getSettingsConfig().getBoolean( "settings.join_message" ) )
             event.setJoinMessage( null );
 
         if ( player.isOp() && Bukkit.getPluginManager().getPlugin( "NickAPI" ) == null ) {
-            player.sendMessage( "§7[§5HaoNick§7] §aThank you for using HaoNick!" );
-            player.sendMessage( "§7[§5HaoNick§7] §eHaoNick §cneeds §eNickAPI §cto work." );
-            player.sendMessage( "§7[§5HaoNick§7] §cDiscord: §ehttps://haoshoku.xyz/go/discord" );
-            player.sendMessage( "§7[§5HaoNick§7] §cPlease download it here:" );
-            player.sendMessage( "§7[§5HaoNick§7] §ehttps://haoshoku.xyz/go/nickapi" );
+            ErrorUtils.err( "§cHaoNick §cneeds §eNickAPI §cto work. \n§cDownload the NickAPI here: §ehttps://haoshoku.xyz/go/nickapi"  );
             return;
         }
 
+        if ( !settingsConfig.getBoolean( "settings.tab.async" ) )
+            ScoreboardHandling.updateNamesFromScoreboard();
+        else
+            ScoreboardHandling.updateNamesFromScoreboardAsync();
+
         Bukkit.getScheduler().runTaskLaterAsynchronously( this.plugin, () -> {
+            if ( !player.isOnline() ) return;
             boolean nickDataKept = false;
             if ( player.hasPermission( "haonick.*" ) || player.hasPermission(  this.settingsConfig.getString( "settings.keep_nick.permission" ) ) ) {
                 if ( this.plugin.getConfigManager().getSettingsConfig().getBoolean( "settings.keep_nick.active" ) ) {
@@ -71,15 +76,13 @@ public class PlayerJoinListener implements Listener {
                     if ( user.getNickedSkinValue() != null && user.getNickedSkinSignature() != null ) {
                         if ( this.settingsConfig.getBoolean( "settings.keep_nick.data.skin" ) ) {
                             NickAPI.setSkin( player, user.getNickedSkinValue(), user.getNickedSkinSignature() );
-                            nickDataKept = true;
                         }
                     }
 
                     if ( user.getNickedGameProfile() != null ) {
                         if ( NickAPI.getConfig().isGameProfileChanges() ) {
-                            if ( this.settingsConfig.getBoolean( "settings.keep_nick.data.game_profile_name" ) ) {
+                            if ( this.settingsConfig.getBoolean( "settings.keep_nick.data.game_profile_name" ) )
                                 NickAPI.setGameProfileName( player, user.getNickedGameProfile() );
-                            }
                         }
                         nickDataKept = true;
                     }
@@ -100,18 +103,16 @@ public class PlayerJoinListener implements Listener {
                 Bukkit.broadcastMessage( this.plugin.getConfigManager().getMessagesConfig().getMessage( "messages.join_message", player )
                         .replace( "%player%", NickAPI.getName( player ) ) );
             if ( nickDataKept )
-                player.sendMessage( this.plugin.getConfigManager().getMessagesConfig().getMessage( "messages.nick_data_kept", player ).replace( "%name%", NickAPI.getName( player ) ) );
-            TabUtils.updateNamesFromScoreboard();
-
+                MsgUtils.sendMessage( player, this.plugin.getConfigManager().getMessagesConfig().getMessage( "messages.nick_data_kept", player ).replace( "%name%", NickAPI.getName( player ) ) );
+            ScoreboardHandling.updateNamesFromScoreboardDelayed();
         }, 3L );
 
-        Bukkit.getScheduler().runTaskLater( HaoNick.getPlugin(), () -> {
+        Bukkit.getScheduler().runTaskLaterAsynchronously( HaoNick.getPlugin(), () -> {
             if ( this.settingsConfig.getConfig().getBoolean( "settings.tab.header_and_footer.active" ) ) {
                 for ( Player online : Bukkit.getOnlinePlayers() )
                     TabUtils.sendTabList( online, this.settingsConfig.getMessage( "settings.tab.header_and_footer.header", player ), this.settingsConfig.getMessage( "settings.tab.header_and_footer.footer", player ) );
             }
         }, 3L );
-
     }
 
 

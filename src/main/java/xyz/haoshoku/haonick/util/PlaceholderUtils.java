@@ -8,7 +8,7 @@ public class PlaceholderUtils {
 
     public static String applyPlaceholder( Player player, String text ) {
         if ( Bukkit.getPluginManager().getPlugin( "PlaceholderAPI" ) != null && HaoNick.getPlugin().getConfigManager().getSettingsConfig().getConfig().getBoolean( "settings.placeholder_support" ) )
-            me.clip.placeholderapi.PlaceholderAPI.setPlaceholders( player, text );
+            text = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders( player, text );
         return text;
     }
 

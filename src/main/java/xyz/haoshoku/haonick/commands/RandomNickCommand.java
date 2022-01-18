@@ -1,14 +1,15 @@
 package xyz.haoshoku.haonick.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import xyz.haoshoku.haonick.HaoNick;
 import xyz.haoshoku.haonick.config.HaoConfig;
-import xyz.haoshoku.haonick.manager.HaoUserManager;
-import xyz.haoshoku.haonick.user.HaoUser;
+import xyz.haoshoku.haonick.handler.HaoUserHandler;
 import xyz.haoshoku.haonick.util.CommandUtils;
+import xyz.haoshoku.haonick.util.MsgUtils;
 import xyz.haoshoku.nick.api.NickAPI;
 
 import java.util.LinkedList;
@@ -41,7 +42,7 @@ public class RandomNickCommand extends BukkitCommand {
     public boolean execute( CommandSender sender, String s, String[] args ) {
 
         if ( !CommandUtils.hasPermission( sender, "commands.random_nick_module.command_permission" ) ) {
-            sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.random_nick_module.no_permission_player", sender ) );
+            MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.random_nick_module.no_permission_player", sender ) );
             return true;
         }
 
@@ -50,7 +51,7 @@ public class RandomNickCommand extends BukkitCommand {
         switch ( args.length ) {
             case 0: {
                 if ( !CommandUtils.isPlayer( sender ) ) {
-                    sender.sendMessage( this.messagesConfig.getMessage( "messages.no_player", sender ) );
+                    MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.no_player", sender ) );
                     return true;
                 }
 
@@ -58,7 +59,7 @@ public class RandomNickCommand extends BukkitCommand {
                 String name = this.getRandomName();
 
                 if ( name == null ) {
-                    player.sendMessage( this.messagesConfig.getMessage( "messages.commands.random_nick_module.no_names_available", sender ) );
+                    MsgUtils.sendMessage( player, this.messagesConfig.getMessage( "messages.commands.random_nick_module.no_names_available", sender ) );
                     return true;
                 }
 
@@ -70,9 +71,9 @@ public class RandomNickCommand extends BukkitCommand {
                 boolean nicked = this.nick( null, player, name );
 
                 if ( !nicked )
-                    player.sendMessage( this.messagesConfig.getMessage( "messages.commands.random_nick_module.player_reset", sender ) );
+                    MsgUtils.sendMessage( player, this.messagesConfig.getMessage( "messages.commands.random_nick_module.player_reset", sender ) );
                 else
-                    player.sendMessage( this.messagesConfig.getMessage( "messages.commands.random_nick_module.player_nicks", sender ).replace( "%name%", name ) );
+                    MsgUtils.sendMessage( player, this.messagesConfig.getMessage( "messages.commands.random_nick_module.player_nicks", sender ).replace( "%name%", name ) );
                 break;
             }
 
@@ -81,12 +82,12 @@ public class RandomNickCommand extends BukkitCommand {
                 Player target = Bukkit.getPlayer( args[0] );
 
                 if ( !sender.hasPermission( this.commandsConfig.getString( "commands.random_nick_module.change_another_player_permission" ) ) ) {
-                    sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.random_nick_module.no_permission_target", sender ) );
+                    MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.random_nick_module.no_permission_target", sender ) );
                     return true;
                 }
 
                 if ( target == null ) {
-                    sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.random_nick_module.target_not_online", sender ) );
+                    MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.random_nick_module.target_not_online", sender ) );
                     return true;
                 }
 
@@ -102,15 +103,15 @@ public class RandomNickCommand extends BukkitCommand {
                 boolean nicked = this.nick( sender, target, name );
 
                 if ( !nicked ) {
-                    sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.random_nick_module.player_resets_target", target )
+                    MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.random_nick_module.player_resets_target", target )
                             .replace( "%target%", NickAPI.getOriginalName( target ) ) );
-                    target.sendMessage( this.messagesConfig.getMessage( "messages.commands.random_nick_module.target_gets_reset", target )
+                    MsgUtils.sendMessage( target, this.messagesConfig.getMessage( "messages.commands.random_nick_module.target_gets_reset", target )
                             .replace( "%sender%", sender.getName() ) );
                 } else {
-                    sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.random_nick_module.player_nicks_target", target )
+                    MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.random_nick_module.player_nicks_target", target )
                             .replace( "%name%", name )
                             .replace( "%target%", NickAPI.getOriginalName( target ) ) );
-                    target.sendMessage( this.messagesConfig.getMessage( "messages.commands.random_nick_module.target_gets_nicked", target )
+                    MsgUtils.sendMessage( target, this.messagesConfig.getMessage( "messages.commands.random_nick_module.target_gets_nicked", target )
                             .replace( "%name%", name )
                             .replace( "%sender%", sender.getName() ));
                 }
@@ -128,16 +129,14 @@ public class RandomNickCommand extends BukkitCommand {
     }
 
     private boolean checkConditions( Player player ) {
-        if ( HaoUserManager.getUser( player ).getRandomModuleCooldown() >= System.currentTimeMillis() ) {
-            player.sendMessage( this.messagesConfig.getMessage( "messages.commands.random_nick_module.cooldown", player ) );
+        if ( HaoUserHandler.getUser( player ).getRandomModuleCooldown() >= System.currentTimeMillis() ) {
+            MsgUtils.sendMessage( player, this.messagesConfig.getMessage( "messages.commands.random_nick_module.cooldown", player ) );
             return false;
         }
         return true;
     }
 
     private boolean nick( CommandSender sender, Player target, String name ) {
-        HaoUser haoUser = HaoUserManager.getUser( target );
-
         Player cooldownPlayer;
 
         if ( sender instanceof Player )
@@ -146,8 +145,9 @@ public class RandomNickCommand extends BukkitCommand {
             cooldownPlayer = target;
 
         if ( !cooldownPlayer.hasPermission( this.commandsConfig.getString( "commands.random_nick_module.cooldown_bypass_permission" ) ) )
-            HaoUserManager.getUser( cooldownPlayer ).setRandomModuleCooldown( System.currentTimeMillis()
+            HaoUserHandler.getUser( cooldownPlayer ).setRandomModuleCooldown( System.currentTimeMillis()
                     + ( (long) this.commandsConfig.getInt( "commands.random_nick_module.cooldown" ) * 1000L ) );
+
 
 
         if ( this.resetTagsList.contains( name.toLowerCase() ) ) {
@@ -159,11 +159,18 @@ public class RandomNickCommand extends BukkitCommand {
             return false;
         }
 
+        name = ChatColor.translateAlternateColorCodes( '&', name );
+
         if ( this.uuid ) NickAPI.setUniqueId( target, name );
         if ( this.tag ) NickAPI.nick( target, name );
         if ( this.skin ) NickAPI.setSkin( target, name );
         if ( this.gameProfileName ) NickAPI.setGameProfileName( target, name );
         NickAPI.refreshPlayer( target );
+
+        for ( String command : this.commandsConfig.getStringList( "commands.random_nick_module.command_execution" ) ) {
+            if ( !command.equalsIgnoreCase( "none" ) )
+                target.performCommand( command );
+        }
         return true;
     }
 

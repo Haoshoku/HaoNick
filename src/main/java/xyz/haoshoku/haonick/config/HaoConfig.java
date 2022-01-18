@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import xyz.haoshoku.haonick.HaoNick;
+import xyz.haoshoku.haonick.util.PatternUtils;
 import xyz.haoshoku.haonick.util.PlaceholderUtils;
 
 import java.io.File;
@@ -37,6 +38,8 @@ public class HaoConfig {
         value = value.replace( "%prefix%", HaoNick.getPlugin().getConfigManager().getPrefix() );
         if ( sender instanceof Player )
             value = PlaceholderUtils.applyPlaceholder( (Player) sender, value );
+        value = ChatColor.translateAlternateColorCodes( '&', value );
+        value = PatternUtils.format( value );
         return value;
     }
 
@@ -54,10 +57,13 @@ public class HaoConfig {
 
     public String getString( String path ) {
         String value = this.config.getString( path );
+
         if ( value == null )
             return "§5HaoNick §8| §cConfig entry §e" + path + " §cin §e" + this.fileName
                     + " §cdoes not exist. Please delete your configs to have the latest updates.";
-        return ChatColor.translateAlternateColorCodes( '&', value );
+        value = ChatColor.translateAlternateColorCodes( '&', value );
+        value = PatternUtils.format( value );
+        return value;
     }
 
     public FileConfiguration getConfig() {

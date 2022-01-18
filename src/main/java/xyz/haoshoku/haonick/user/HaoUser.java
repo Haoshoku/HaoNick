@@ -12,6 +12,7 @@ public class HaoUser {
 
     private String fakeRank, rank;
 
+    private boolean fakeRankLoop;
     /*
     MYSQL Load-Data
      */
@@ -53,6 +54,14 @@ public class HaoUser {
 
     public void setFakeRankModuleCooldown( long fakeRankModuleCooldown ) {
         this.fakeRankModuleCooldown = fakeRankModuleCooldown;
+    }
+
+    public boolean isFakeRankLoop() {
+        return this.fakeRankLoop;
+    }
+
+    public void setFakeRankLoop( boolean fakeRankLoop ) {
+        this.fakeRankLoop = fakeRankLoop;
     }
 
     public long getNickModuleCooldown() {

@@ -1,4 +1,4 @@
-package xyz.haoshoku.haonick.manager;
+package xyz.haoshoku.haonick.handler;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import xyz.haoshoku.haonick.HaoNick;
 import xyz.haoshoku.nick.api.NickAPI;
 
-public class PlaceholderAPIManager extends PlaceholderExpansion {
+public class PlaceholderAPIHandler extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getIdentifier() {
@@ -28,21 +28,31 @@ public class PlaceholderAPIManager extends PlaceholderExpansion {
         if ( player == null || !player.isOnline() )
             return "";
 
-        switch ( params ) {
-            case "original_name": case "originalName":
+        String fakeRank = HaoUserHandler.getUser( player ).getFakeRank();
+        switch ( params.toLowerCase() ) {
+            case "original_name": case "originalname":
                 return NickAPI.getOriginalName( player );
 
             case "nick_name": case "nicked_name": case "nickname": case "name":
                 return NickAPI.getName( player );
 
-            case "isNicked": case "is_nicked":
+            case "isnicked": case "is_nicked":
                 return String.valueOf( NickAPI.isNicked( player ) );
 
-            case "isSkinChanged": case "is_skin_changed":
+            case "isskinchanged": case "is_skin_changed":
                 return String.valueOf( NickAPI.isSkinChanged( player ) );
 
             case "uuid":
                 return String.valueOf( NickAPI.getUniqueId( player ) );
+
+            case "fake_rank": case "fakerank":
+                return fakeRank == null ? "null" : fakeRank;
+
+            case "fake_rank_prefix": case "fankrank_prefix": case "fakerankprefix":
+                return fakeRank == null ? "null" : HaoNick.getPlugin().getConfigManager().getFakeRanksConfig().getString( "fake_ranks." + fakeRank + ".tab.prefix" );
+
+            case "fake_rank_suffix": case "fakerank_suffix": case "fakeranksuffix":
+                return fakeRank == null ? "null" : HaoNick.getPlugin().getConfigManager().getFakeRanksConfig().getString( "fake_ranks." + fakeRank + ".tab.suffix" );
         }
 
         return super.onPlaceholderRequest( player, params );

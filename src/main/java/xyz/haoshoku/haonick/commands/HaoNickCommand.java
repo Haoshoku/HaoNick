@@ -14,11 +14,11 @@ import xyz.haoshoku.haonick.util.MsgUtils;
 
 import java.util.List;
 
-public class NickReloadCommand extends BukkitCommand {
+public class HaoNickCommand extends BukkitCommand {
 
     private final HaoConfig commandsConfig, fakeRanksConfig, messagesConfig, ranksConfig, settingsConfig;
 
-    public NickReloadCommand( String name, String description, String usageMessage, List<String> aliases ) {
+    public HaoNickCommand( String name, String description, String usageMessage, List<String> aliases ) {
         super( name, description, usageMessage, aliases );
         this.commandsConfig = HaoNick.getPlugin().getConfigManager().getCommandsConfig();
         this.fakeRanksConfig = HaoNick.getPlugin().getConfigManager().getFakeRanksConfig();
@@ -28,10 +28,20 @@ public class NickReloadCommand extends BukkitCommand {
     }
 
     @Override
-    public boolean execute( @NotNull CommandSender sender, @NotNull String s, @NotNull String[] strings ) {
+    public boolean execute( @NotNull CommandSender sender, @NotNull String s, @NotNull String[] args ) {
 
         if ( !CommandUtils.hasPermission( sender, "commands.nick_reload_module.command_permission" ) ) {
             MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.nick_reload_module.no_permission_player", sender ) );
+            return true;
+        }
+
+        if ( args.length == 0 ) {
+            this.sendHelp( sender );
+            return true;
+        }
+
+        if ( !args[0].equalsIgnoreCase( "reload" ) ) {
+            this.sendHelp( sender );
             return true;
         }
 
@@ -66,5 +76,10 @@ public class NickReloadCommand extends BukkitCommand {
             HaoNick.getPlugin().getPlaceholderAPIManager().unregister();
             HaoNick.getPlugin().getPlaceholderAPIManager().register();
         }
+    }
+
+    private void sendHelp( CommandSender sender ) {
+        sender.sendMessage( HaoNick.getPlugin().getConfigManager().getPrefix() + " §5HaoNick §ev" + HaoNick.getPlugin().getDescription().getVersion() + "§7 by §cHaoshoku" );
+        sender.sendMessage( HaoNick.getPlugin().getConfigManager().getPrefix() + " §e/haonick reload to reload the config" );
     }
 }

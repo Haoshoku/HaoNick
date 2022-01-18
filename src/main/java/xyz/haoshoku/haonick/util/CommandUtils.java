@@ -8,7 +8,7 @@ import xyz.haoshoku.haonick.config.HaoConfig;
 public class CommandUtils {
 
     public static boolean hasPermission( CommandSender sender, String permission ) {
-        HaoConfig config  = HaoNick.getPlugin().getConfigManager().getCommandsConfig();
+        HaoConfig config = HaoNick.getPlugin().getConfigManager().getCommandsConfig();
         return sender.hasPermission( config.getString( permission ) ) || sender.hasPermission( "haonick.*" );
     }
 

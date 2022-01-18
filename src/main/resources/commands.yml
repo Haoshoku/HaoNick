@@ -1,4 +1,4 @@
-# HaoNick 4.1.3 by Haoshoku
+# HaoNick configuration by Haoshoku
 # Support: https://haoshoku.xyz/go/discord
 # HaoNick do register its commands dynamically. If you want to rename the commands, feel free to do that!
 
@@ -10,6 +10,7 @@ commands:
     command_permission: 'haonick.nick'
     cooldown_bypass_permission: 'haonick.nick.bypass'
     change_another_player_permission: 'haonick.nick.others'
+    chatcolor_permission: 'haonick.chatcolor'
     min_length: 3
     cooldown: 5
     uuid: true
@@ -25,10 +26,14 @@ commands:
       - 'off'
       - clear
       - unnick
+    whitelist:
+      - Minecraft
     blacklist:
       - Notch
       - Haoshoku
     blacklist_contains_check: false
+    command_execution:
+      - none
   # Settings for /nicklist
   nick_list_module:
     command: nicklist
@@ -37,6 +42,8 @@ commands:
     usage: '/nicklist'
     aliases:
       - nlist
+    command_execution:
+      - none
   # Settings for /nickreload
   nick_reload_module:
     command: nickreload
@@ -45,6 +52,8 @@ commands:
     usage: '/nickreload'
     aliases:
       - nreload
+    command_execution:
+      - none
   # Settings for /skin
   skin_module:
     command: skin
@@ -69,6 +78,8 @@ commands:
     blacklist:
       - Notch
       - Haoshoku
+    command_execution:
+      - none
   # Settings for /unnick
   unnick_module:
     command: unnick
@@ -80,6 +91,8 @@ commands:
     usage: '/unnick <Name>'
     aliases:
       - unnickplayer
+    command_execution:
+      - none
   # Settings /randomnick
   random_nick_module:
     command: randomnick
@@ -123,6 +136,8 @@ commands:
       - RandomNick18
       - RandomNick19
       - RandomNick20
+    command_execution:
+      - none
   fake_rank_module:
     command: fakerank
     command_permission: 'haonick.fakerank'
@@ -134,3 +149,5 @@ commands:
     aliases:
       - setrank
       - setfakerank
+    command_execution:
+      - none

@@ -6,8 +6,9 @@ import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import xyz.haoshoku.haonick.HaoNick;
 import xyz.haoshoku.haonick.config.HaoConfig;
-import xyz.haoshoku.haonick.manager.HaoUserManager;
+import xyz.haoshoku.haonick.handler.HaoUserHandler;
 import xyz.haoshoku.haonick.util.CommandUtils;
+import xyz.haoshoku.haonick.util.MsgUtils;
 import xyz.haoshoku.nick.api.NickAPI;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class SkinCommand extends BukkitCommand {
     public boolean execute( CommandSender sender, String s, String[] args ) {
 
         if ( !CommandUtils.hasPermission( sender, "commands.skin_module.command_permission" ) ) {
-            sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.skin_module.no_permission_player", sender ) );
+            MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.skin_module.no_permission_player", sender ) );
             return true;
         }
 
@@ -47,7 +48,7 @@ public class SkinCommand extends BukkitCommand {
         switch ( args.length ) {
             case 1: {
                 if ( !CommandUtils.isPlayer( sender ) ) {
-                    sender.sendMessage( this.messagesConfig.getMessage( "messages.no_player", sender ) );
+                    MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.no_player", sender ) );
                     return true;
                 }
                 player = (Player) sender;
@@ -58,9 +59,9 @@ public class SkinCommand extends BukkitCommand {
                 boolean skinChanged = this.changeSkin( null, player, name );
 
                 if ( !skinChanged )
-                    player.sendMessage( this.messagesConfig.getMessage( "messages.commands.skin_module.player_reset", sender ) );
+                    MsgUtils.sendMessage( player, this.messagesConfig.getMessage( "messages.commands.skin_module.player_reset", sender ) );
                 else
-                    player.sendMessage( this.messagesConfig.getMessage( "messages.commands.skin_module.player_changes_skin", sender ).replace( "%name%", name ) );
+                    MsgUtils.sendMessage( player, this.messagesConfig.getMessage( "messages.commands.skin_module.player_changes_skin", sender ).replace( "%name%", name ) );
                 break;
             }
 
@@ -69,12 +70,12 @@ public class SkinCommand extends BukkitCommand {
                 Player target = Bukkit.getPlayer( args[0] );
 
                 if ( !CommandUtils.hasPermission( sender, "commands.skin_module.change_another_player_permission" ) ) {
-                    sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.skin_module.no_permission_target", sender ) );
+                    MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.skin_module.no_permission_target", sender ) );
                     return true;
                 }
 
                 if ( target == null ) {
-                    sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.skin_module.target_not_online", sender ) );
+                    MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.skin_module.target_not_online", sender ) );
                     return true;
                 }
 
@@ -87,15 +88,15 @@ public class SkinCommand extends BukkitCommand {
                 boolean skinChanged = this.changeSkin( sender, target, name );
 
                 if ( !skinChanged ) {
-                    sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.skin_module.player_resets_target", target )
+                    MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.skin_module.player_resets_target", target )
                             .replace( "%target%", NickAPI.getOriginalName( target ) ) );
-                    target.sendMessage( this.messagesConfig.getMessage( "messages.commands.skin_module.target_gets_reset", target )
+                    MsgUtils.sendMessage( target, this.messagesConfig.getMessage( "messages.commands.skin_module.target_gets_reset", target )
                             .replace( "%sender%", sender.getName() ) );
                 } else {
-                    sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.skin_module.player_changes_skin_target", target )
+                    MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.skin_module.player_changes_skin_target", target )
                             .replace( "%name%", name )
                             .replace( "%target%", NickAPI.getOriginalName( target ) ) );
-                    target.sendMessage( this.messagesConfig.getMessage( "messages.commands.skin_module.target_gets_skin_changed", target )
+                    MsgUtils.sendMessage( target, this.messagesConfig.getMessage( "messages.commands.skin_module.target_gets_skin_changed", target )
                             .replace( "%name%", name )
                             .replace( "%sender%", sender.getName() ) );
                 }
@@ -103,7 +104,7 @@ public class SkinCommand extends BukkitCommand {
             }
 
             default:
-                sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.skin_module.usage", sender ) );
+                MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.skin_module.usage", sender ) );
                 break;
         }
 
@@ -117,18 +118,18 @@ public class SkinCommand extends BukkitCommand {
     }
 
     private boolean checkConditions( Player player, String name ) {
-        if ( HaoUserManager.getUser( player ).getSkinModuleCooldown() >= System.currentTimeMillis() ) {
-            player.sendMessage( this.messagesConfig.getMessage( "messages.commands.skin_module.cooldown", player ) );
+        if ( HaoUserHandler.getUser( player ).getSkinModuleCooldown() >= System.currentTimeMillis() ) {
+            MsgUtils.sendMessage( player, this.messagesConfig.getMessage( "messages.commands.skin_module.cooldown", player ) );
             return false;
         }
 
         if ( NickAPI.nickExists( name ) && this.commandsConfig.getBoolean( "commands.skin_module.nick_exists" ) ) {
-            player.sendMessage( this.messagesConfig.getMessage( "messages.commands.nick_module.nick_exists", player ).replace( "%name%", name ) );
+            MsgUtils.sendMessage( player, this.messagesConfig.getMessage( "messages.commands.nick_module.nick_exists", player ).replace( "%name%", name ) );
             return false;
         }
 
         if ( this.blackList.contains( name.toLowerCase() ) ) {
-            player.sendMessage( this.messagesConfig.getMessage( "messages.commands.skin_module.blacklist", player ) );
+            MsgUtils.sendMessage( player, this.messagesConfig.getMessage( "messages.commands.skin_module.blacklist", player ) );
             return false;
         }
 
@@ -144,7 +145,7 @@ public class SkinCommand extends BukkitCommand {
             cooldownPlayer = target;
 
         if ( !cooldownPlayer.hasPermission( this.commandsConfig.getString( "commands.skin_module.cooldown_bypass_permission" ) ) )
-            HaoUserManager.getUser( cooldownPlayer ).setSkinModuleCooldown( System.currentTimeMillis()
+            HaoUserHandler.getUser( cooldownPlayer ).setSkinModuleCooldown( System.currentTimeMillis()
                     + ( (long) this.commandsConfig.getInt( "commands.skin_module.cooldown" ) * 1000L ) );
 
         if ( this.resetTagsList.contains( name.toLowerCase() ) ) {
@@ -161,6 +162,11 @@ public class SkinCommand extends BukkitCommand {
         if ( this.skin ) NickAPI.setSkin( target, name );
         if ( this.gameProfileName ) NickAPI.setGameProfileName( target, name );
         NickAPI.refreshPlayer( target );
+
+        for ( String command : this.commandsConfig.getStringList( "commands.skin_module.command_execution" ) ) {
+            if ( !command.equalsIgnoreCase( "none" ) )
+                target.performCommand( command );
+        }
         return true;
     }
 

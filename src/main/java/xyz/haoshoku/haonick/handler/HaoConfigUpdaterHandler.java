@@ -1,17 +1,17 @@
-package xyz.haoshoku.haonick.util;
+package xyz.haoshoku.haonick.handler;
 
 import xyz.haoshoku.haonick.HaoNick;
 import xyz.haoshoku.haonick.config.HaoConfig;
 
 import java.util.*;
 
-public class ConfigUtils {
+public class HaoConfigUpdaterHandler {
 
     private final List<Map<String, Object>> commandsYMLConfig;
     private final List<Map<String, Object>> messagesYMLConfig;
     private final List<Map<String, Object>> settingsYMLConfig;
 
-    public ConfigUtils() {
+    public HaoConfigUpdaterHandler() {
         this.commandsYMLConfig = new LinkedList<>();
         this.messagesYMLConfig = new LinkedList<>();
         this.settingsYMLConfig = new LinkedList<>();
@@ -20,6 +20,8 @@ public class ConfigUtils {
         this.initializeMessagesYML();
         this.initializeSettingsYML();
         this.updateCommands();
+        this.updateMessages();
+        this.updateSettings();
     }
 
     private void initializeCommandsYML() {
@@ -27,6 +29,7 @@ public class ConfigUtils {
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.command_permission", "haonick.nick" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.cooldown_bypass_permission", "haonick.nick.bypass" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.change_another_player_permission", "haonick.nick.others" ) );
+        this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.chatcolor_permission", "haonick.chatcolor" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.min_length", 3 ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.cooldown", 5 ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.uuid", true ) );
@@ -37,21 +40,26 @@ public class ConfigUtils {
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.usage", "/nick <Name>" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.aliases", Collections.singletonList( "changenick" ) ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.reset_args", Arrays.asList( "reset", "off", "clear", "unnick" ) ) );
-        this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.blacklist", Arrays.asList( "Haoshoku", "Notch" ) ) );
+        this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.whitelist", Collections.singletonList( "Minecraft" ) ) );
+        this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.blacklist", Arrays.asList( "Haoshoku", "Notch", "Craft" ) ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.blacklist_contains_check", false ) );
+        this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.command_execution", Collections.singletonList( "none" ) ) );
+
 
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_list_module.command", "nicklist" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_list_module.command_permission", "haonick.nicklist" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_list_module.description", "List up all names" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_list_module.usage", "/nicklist" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_list_module.aliases", Collections.singletonList( "nlist" ) ) );
+        this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_list_module.command_execution", Collections.singletonList( "none" ) ) );
+
 
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_reload_module.command", "nickreload" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_reload_module.command_permission", "haonick.nickreload" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_reload_module.description", "Reload the config" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_reload_module.usage", "/nickreload" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_reload_module.aliases", Collections.singletonList( "nreload" ) ) );
-
+        this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_reload.command_execution", Collections.singletonList( "none" ) ) );
 
         this.commandsYMLConfig.add( this.getConfigValue( "commands.skin_module.command", "skin" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.skin_module.command_permission", "haonick.skin" ) );
@@ -68,6 +76,7 @@ public class ConfigUtils {
         this.commandsYMLConfig.add( this.getConfigValue( "commands.skin_module.aliases", Collections.singletonList( "changeskin" ) ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.skin_module.reset_args", Arrays.asList( "reset", "off", "clear", "unnick" ) ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.skin_module.blacklist", Arrays.asList( "Haoshoku", "Notch" ) ) );
+        this.commandsYMLConfig.add( this.getConfigValue( "commands.skin_module.command_execution", Collections.singletonList( "none" ) ) );
 
 
         this.commandsYMLConfig.add( this.getConfigValue( "commands.unnick_module.command", "unnick" ) );
@@ -78,6 +87,7 @@ public class ConfigUtils {
         this.commandsYMLConfig.add( this.getConfigValue( "commands.unnick_module.description", "Change your player tag and uuid" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.unnick_module.usage", "/unnick <Name>" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.unnick_module.aliases", Collections.singletonList( "unnickplayer" ) ) );
+        this.commandsYMLConfig.add( this.getConfigValue( "commands.unnick_module.command_execution", Collections.singletonList( "none" ) ) );
 
 
         this.commandsYMLConfig.add( this.getConfigValue( "commands.random_nick_module.command", "randomnick" ) );
@@ -95,6 +105,7 @@ public class ConfigUtils {
         this.commandsYMLConfig.add( this.getConfigValue( "commands.random_nick_module.aliases", Collections.singletonList( "random" ) ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.random_nick_module.reset_args", Arrays.asList( "reset", "off", "clear", "unnick" ) ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.random_nick_module.random_names", Arrays.asList( "RandomNick1", "RandomNick2", "RandomNick3", "RandomNick4", "RandomNick5" ) ) );
+        this.commandsYMLConfig.add( this.getConfigValue( "commands.random_nick_module.command_execution", Collections.singletonList( "none" ) ) );
 
 
         this.commandsYMLConfig.add( this.getConfigValue( "commands.fake_rank_module.command", "fakerank" ) );
@@ -203,14 +214,27 @@ public class ConfigUtils {
         this.settingsYMLConfig.add( this.getConfigValue( "settings.keep_nick.mysql.password", "password" ) );
         this.settingsYMLConfig.add( this.getConfigValue( "settings.keep_nick.mysql.table_name", "nick" ) );
         this.settingsYMLConfig.add( this.getConfigValue( "settings.chat.broadcast_message_instead_of_format", true ) );
-        this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.timer.active", false ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.timer.active", true ) );
         this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.timer.update_interval", 60 ) );
-        this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.new_scoreboard", true ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.async", true ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.fake_ranks_permission_based", false ) );
         this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.scoreboard_creation_time", 10 ) );
-        this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.header_and_footer.active", true ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.header_and_footer.active", false ) );
         this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.header_and_footer.header", "&aYour header can be edited within settings.yml of HaoNick folder" ) );
         this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.header_and_footer.footer", "&cYour footer can be edited within settings.yml of HaoNick folder" ) );
         this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.header_and_footer.update_interval", 600 ) );
+
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.death_message.active", false ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.death_message.text.dead", "Player %player% died" ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.death_message.text.killed_by_player", "Player %player% was killed by %killer%" ) );
+
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.action_bar.active", false ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.action_bar.permanent", true ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.action_bar.text.permanent", "&cName: &c%name%" ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.action_bar.text.while_nicked", "&cYou are currently nicked as &e%name%" ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.action_bar.update_interval", 20 ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.action_bar.worlds", Arrays.asList( "world" ) ) );
+
         this.settingsYMLConfig.add( this.getConfigValue( "settings.placeholder_support", true ) );
     }
 
@@ -271,7 +295,8 @@ public class ConfigUtils {
         List<String> currentConfigList = new LinkedList<>( settingsConfig.getConfig().getConfigurationSection( "" ).getKeys( true ) ); // aktuelle, not updated
         List<Map<String, Object>> settingsYMLConfigCopyList = new LinkedList<>( this.settingsYMLConfig );
         List<String> bypassList = Arrays.asList( "settings", "settings.keep_nick", "settings.keep_nick.data",
-                "settings.keep_nick.mysql", "settings.chat", "settings.tab", "settings.tab.timer", "settings.tab.header_and_footer" );
+                "settings.keep_nick.mysql", "settings.chat", "settings.tab", "settings.tab.timer", "settings.tab.header_and_footer",
+                "settings.action_bar", "settings.action_bar.text", "settings.death_message", "settings.death_message.text" );
         for ( Map<String, Object> map : settingsYMLConfigCopyList ) {
             for ( String key : map.keySet() ) {
                 if ( currentConfigList.contains( key ) ) {

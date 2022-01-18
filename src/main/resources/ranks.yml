@@ -1,6 +1,8 @@
-# HaoNick 4.1.3 by Haoshoku
+# HaoNick configuration by Haoshoku
 # Support: https://haoshoku.xyz/go/discord
 # If you want to use the integrated prefix/suffix system of HaoNick, do not forget to activate it here.
+
+# RANK: A rank that is being used by default players (not nicked players!)
 
 # Set it to true if you want to use the rank {prefix+suffix} from HaoNick!
 ranks_settings:
@@ -28,20 +30,22 @@ ranks:
       message: '&4&lOWNER &c%name%&f: %message%'
       chatcolor: true
     tab:
-      name: '001owner'
+      weight: "01"
       prefix: '&4&lOWNER &9'
       suffix: ''
       color: 'RED'
+      player_list_name: 'none'
   admin:
     permission: 'haonick.admin'
     chat:
       message: '&4&lADMIN &9%name%&f: %message%'
       chatcolor: true
     tab:
-      name: '002admin'
+      weight: "02"
       prefix: '&4&lADMIN &9'
       suffix: ''
       color: 'YELLOW'
+      player_list_name: 'none'
   player:
     # If you add default: true, the player will bypass the permission check and will receive this prefix & suffix
     default: true
@@ -50,7 +54,8 @@ ranks:
       message: '&9&lPLAYER &9%name%&f: %message%'
       chatcolor: false
     tab:
-      name: '003player'
+      weight: "99"
       prefix: '&9&lPLAYER &9'
       suffix: ''
       color: 'GRAY'
+      player_list_name: 'none'

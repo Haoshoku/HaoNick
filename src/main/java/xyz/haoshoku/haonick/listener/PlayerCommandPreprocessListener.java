@@ -16,6 +16,7 @@ public class PlayerCommandPreprocessListener implements Listener {
             event.setCancelled( true );
             player.sendMessage( HaoNick.getPlugin().getConfigManager().getPrefix() + " §5HaoNick §ev" + HaoNick.getPlugin().getDescription().getVersion() + "§7 by §cHaoshoku" );
         }
+
     }
 
 }

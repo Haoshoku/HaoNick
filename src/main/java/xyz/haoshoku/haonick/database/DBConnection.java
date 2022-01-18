@@ -1,10 +1,14 @@
 package xyz.haoshoku.haonick.database;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
 import xyz.haoshoku.haonick.HaoNick;
-import xyz.haoshoku.nick.NickPlugin;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class DBConnection {
@@ -24,27 +28,32 @@ public class DBConnection {
     }
 
     public void connect() {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl( "jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database + "?characterEncoding=latin1" );
+        config.setUsername( this.username );
+        config.setPassword( this.password );
+        config.addDataSourceProperty( "cachePrepStmts", "true" );
+        config.addDataSourceProperty( "prepStmtCacheSize", "250" );
+        config.addDataSourceProperty( "prepStmtCacheSqlLimit", "2048" );
+        config.setMaximumPoolSize( 10 );
+
+        HikariDataSource dataSource = new HikariDataSource( config );
         try {
-            this.connection = DriverManager.getConnection( 
-                    "jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database + "?autoReconnect=true", 
-                    this.username, this.password );
-            this.createTable();
-            this.preventShutdownForTimeoutUser();
+            this.connection = dataSource.getConnection();
         } catch ( SQLException throwables ) {
             throwables.printStackTrace();
-            Bukkit.getConsoleSender().sendMessage( "§7[§5HaoNick§7] §cMySQL data are not correct! Please check it in settings.yml again!" );
-            HaoNick.getPlugin().setDBConnection( null );
+            Bukkit.getPluginManager().disablePlugin( HaoNick.getPlugin() );
+            return;
         }
+        this.createTable();
+        this.preventShutdownForTimeoutUser();
     }
 
     public void disconnect() {
-        if ( this.connection != null ) {
-            try {
-                this.connection.close();
-                this.connection = null;
-            } catch ( SQLException throwables ) {
-                throwables.printStackTrace( );
-            }
+        try {
+            this.connection.close();
+        } catch ( SQLException throwables ) {
+            throwables.printStackTrace( );
         }
     }
 
@@ -118,7 +127,7 @@ public class DBConnection {
     }
 
     public void setDataAsync( UUID uuid, String key, String value ) {
-        Bukkit.getScheduler().runTaskAsynchronously( NickPlugin.getPlugin(), () -> this.setDataSync( uuid, key, value ) );
+        Bukkit.getScheduler().runTaskAsynchronously( HaoNick.getPlugin(), () -> this.setDataSync( uuid, key, value ) );
     }
 
     public void setDataSync( UUID uuid, String key, String value ) {
@@ -139,7 +148,8 @@ public class DBConnection {
     }
 
     private void preventShutdownForTimeoutUser() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously( HaoNick.getPlugin(), () -> this.createTable(), 20L*60L*8L, 20L*60L*8L );
+        Bukkit.getScheduler().runTaskTimerAsynchronously( HaoNick.getPlugin(), this::createTable, 20L*60L*8L, 20L*60L*8L );
     }
+    
 
 }

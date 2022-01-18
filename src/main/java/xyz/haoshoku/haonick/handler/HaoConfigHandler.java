@@ -1,15 +1,15 @@
-package xyz.haoshoku.haonick.manager;
+package xyz.haoshoku.haonick.handler;
 
 import org.bukkit.ChatColor;
 import xyz.haoshoku.haonick.config.HaoConfig;
 
-public class HaoConfigManager {
+public class HaoConfigHandler {
 
     private final HaoConfig commandsConfig, fakeRanksConfig, messagesConfig, playersConfig, ranksConfig, settingsConfig;
 
     private String prefix;
 
-    public HaoConfigManager() {
+    public HaoConfigHandler() {
         this.commandsConfig = new HaoConfig( "commands.yml" );
         this.fakeRanksConfig = new HaoConfig( "fake_ranks.yml" );
         this.messagesConfig = new HaoConfig( "messages.yml" );

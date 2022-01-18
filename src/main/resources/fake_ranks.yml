@@ -1,13 +1,15 @@
-# HaoNick 4.1.3 by Haoshoku
+# HaoNick configuration by Haoshoku
 # Support: https://haoshoku.xyz/go/discord
 # If you want to use the integrated prefix/suffix system of HaoNick, do not forget to activate it here.
+
+# Nicked-Ranks: A rank that is being used if you nick yourself
 
 # Set it to true if you want to use the fake_rank {prefix+suffix} from HaoNick!
 fake_ranks_settings:
   chat: true
   tab: true
 
-# Explantation of rank system of HaoNick:
+# Explantation of fake_rank system of HaoNick:
 # You can just copy a rank block and paste it again with a different name.
 # If you want to have a sorted scoreboard, be sure to make an order in the "name" of tab entry of each rank.
 # Example: 003mvp is above 004mvp
@@ -17,7 +19,7 @@ fake_ranks_settings:
 # You see there colors like RED, GRAY. Write these colors in the uppercase in the color entry if you want to use it.
 # Only one color can be used!
 
-# Each rank has its own permission. Just give the specific rank the permission!
+# Each fake_rank has its own permission. Just give the specific fake_rank the permission!
 # If you have a permission plugins that allows you to give '*' permission, just set the permissions of OTHER
 # ranks to false (- permission).
 
@@ -30,10 +32,11 @@ fake_ranks:
       message: '&b&lMVP &b%name%&f: %message%'
       chatcolor: true
     tab:
-      name: '001mvp'
+      weight: "07"
       prefix: '&b&lMVP &9'
       suffix: ''
       color: 'AQUA'
+      player_list_name: 'none'
   vip:
     display_name: '&6VIP'
     permission: 'haonick.fakerank.vip'
@@ -41,10 +44,11 @@ fake_ranks:
       message: '&6&lVIP+ &6%name%&f: %message%'
       chatcolor: true
     tab:
-      name: '002vip'
+      weight: "08"
       prefix: '&6&lVIP &9'
       suffix: ''
       color: 'GOLD'
+      player_list_name: 'none'
   normal:
     display_name: '&9Normal'
     permission: 'haonick.fakerank.normal'
@@ -53,7 +57,8 @@ fake_ranks:
       message: '&9%name%&f: %message%'
       chatcolor: false
     tab:
-      name: '003normal'
-      prefix: '&9'
+      weight: "99"
+      prefix: '&9&lPLAYER &9'
       suffix: ''
       color: 'BLUE'
+      player_list_name: 'none'

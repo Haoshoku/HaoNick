@@ -4,8 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import xyz.haoshoku.haonick.scoreboard.ScoreboardHandling;
 import xyz.haoshoku.haonick.util.NickUtils;
-import xyz.haoshoku.haonick.util.TabUtils;
 import xyz.haoshoku.nick.api.NickAPI;
 import xyz.haoshoku.nick.events.NickFinishEvent;
 
@@ -19,7 +19,7 @@ public class NickFinishListener implements Listener {
             return;
 
         if ( !event.getOriginalName().equalsIgnoreCase( event.getName() ) )
-            TabUtils.updateNamesFromScoreboard();
+            ScoreboardHandling.updateNamesFromScoreboardDelayed();
 
         if ( player.getUniqueId() != event.getUniqueId() )
             NickUtils.setNickedValue( player, "nicked_uuid", event.getUniqueId().toString() );
@@ -43,6 +43,7 @@ public class NickFinishListener implements Listener {
             NickUtils.setNickedValue( player, "nicked_game_profile_name", player.getName() );
         else
             NickUtils.setNickedValue( player, "nicked_game_profile_name", "-" );
+
     }
 
     private boolean checkEquality( String[] s1, String[] s2 ) {

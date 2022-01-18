@@ -1,4 +1,4 @@
-# HaoNick 4.1.3 by Haoshoku
+# HaoNick configuration by Haoshoku
 # Support: https://haoshoku.xyz/go/discord
 
 # %line% for new line
@@ -81,6 +81,7 @@ messages:
       no_permission_player: '%prefix% &cYou do not have the permission to use the fake rank module'
       usage: '%prefix% &aThese fake ranks are available after being nicked: %line% &7- &e%fake_ranks% %line% &aWrite &e/fakerank <rank> &ato set your fake rank!'
       cooldown: '%prefix% &cPlease wait 5 seconds until you are using this command again'
+      command_blocked: '%prefix% This command is blocked'
       rank_not_exist: '%prefix% &cThis fake rank does not exist'
       rank_updated: '%prefix% &aYour fake rank has been updated'
       rank_no_permission: '%prefix% &cYou do not have the permissions to give yourself this rank'

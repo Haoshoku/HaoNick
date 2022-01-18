@@ -7,8 +7,9 @@ import org.bukkit.entity.Player;
 import xyz.haoshoku.haonick.HaoNick;
 import xyz.haoshoku.haonick.config.HaoConfig;
 import xyz.haoshoku.haonick.database.DBConnection;
-import xyz.haoshoku.haonick.manager.HaoUserManager;
+import xyz.haoshoku.haonick.handler.HaoUserHandler;
 import xyz.haoshoku.haonick.user.HaoUser;
+import xyz.haoshoku.haonick.util.MsgUtils;
 import xyz.haoshoku.nick.api.NickAPI;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class UnnickCommand extends BukkitCommand {
     @Override
     public boolean execute( CommandSender sender, String s, String[] args ) {
         if ( !sender.hasPermission( this.commandsConfig.getString( "commands.unnick_module.command_permission" ) ) ) {
-            sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.unnick_module.no_permission_player", sender ) );
+            MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.unnick_module.no_permission_player", sender ) );
             return true;
         }
 
@@ -37,7 +38,7 @@ public class UnnickCommand extends BukkitCommand {
         switch ( args.length ) {
             case 0: {
                 if ( ! ( sender instanceof Player) ) {
-                    sender.sendMessage( this.messagesConfig.getMessage( "messages.no_player", sender ) );
+                    MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.no_player", sender ) );
                     return true;
                 }
                 player = (Player) sender;
@@ -51,12 +52,12 @@ public class UnnickCommand extends BukkitCommand {
                 Player target = Bukkit.getPlayer( args[0] );
 
                 if ( !sender.hasPermission( this.commandsConfig.getString( "commands.unnick_module.change_another_player_permission" ) ) ) {
-                    sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.unnick_module.no_permission_target", sender ) );
+                    MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.unnick_module.no_permission_target", sender ) );
                     return true;
                 }
 
                 if ( target == null ) {
-                    sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.unnick_module.target_not_online", sender ) );
+                    MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.unnick_module.target_not_online", sender ) );
                     return true;
                 }
 
@@ -66,15 +67,15 @@ public class UnnickCommand extends BukkitCommand {
                 }
 
                 this.unnick( sender, target );
-                sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.unnick_module.player_resets_target", target )
+                MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.unnick_module.player_resets_target", target )
                         .replace( "%target%", NickAPI.getOriginalName( target ) ) );
-                target.sendMessage( this.messagesConfig.getMessage( "messages.commands.unnick_module.target_gets_reset", target )
+                MsgUtils.sendMessage( target, this.messagesConfig.getMessage( "messages.commands.unnick_module.target_gets_reset", target )
                         .replace( "%sender%", sender.getName() ) );
                 break;
             }
 
             default:
-                sender.sendMessage( this.messagesConfig.getMessage( "messages.commands.unnick_module.usage", sender ) );
+                MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.unnick_module.usage", sender ) );
                 break;
         }
         return true;
@@ -82,7 +83,7 @@ public class UnnickCommand extends BukkitCommand {
 
 
     private boolean checkConditions( Player player ) {
-        if ( HaoUserManager.getUser( player ).getUnnickModuleCooldown() >= System.currentTimeMillis() ) {
+        if ( HaoUserHandler.getUser( player ).getUnnickModuleCooldown() >= System.currentTimeMillis() ) {
             player.sendMessage( this.messagesConfig.getMessage( "messages.commands.unnick_module.cooldown", player ) );
             return false;
         }
@@ -91,7 +92,7 @@ public class UnnickCommand extends BukkitCommand {
     }
 
     private void unnick( CommandSender sender, Player target ) {
-        HaoUser haoUser = HaoUserManager.getUser( target );
+        HaoUser haoUser = HaoUserHandler.getUser( target );
 
         Player cooldownPlayer;
 
@@ -100,13 +101,13 @@ public class UnnickCommand extends BukkitCommand {
         else
             cooldownPlayer = target;
 
-        if ( HaoUserManager.getUser( cooldownPlayer ).getNickModuleCooldown() >= System.currentTimeMillis() ) {
-            cooldownPlayer.sendMessage( this.messagesConfig.getMessage( "messages.commands.unnick_module.cooldown", cooldownPlayer ) );
+        if ( HaoUserHandler.getUser( cooldownPlayer ).getNickModuleCooldown() >= System.currentTimeMillis() ) {
+            MsgUtils.sendMessage( sender, this.messagesConfig.getMessage( "messages.commands.unnick_module.cooldown", cooldownPlayer ) );
             return;
         }
 
         if ( !cooldownPlayer.hasPermission( this.commandsConfig.getString( "commands.unnick_module.cooldown_bypass_permission" ) ) )
-            HaoUserManager.getUser( cooldownPlayer ).setUnnickModuleCooldown( System.currentTimeMillis()
+            HaoUserHandler.getUser( cooldownPlayer ).setUnnickModuleCooldown( System.currentTimeMillis()
                     + ( (long) this.commandsConfig.getInt( "commands.unnick_module.cooldown" ) * 1000L ) );
 
         NickAPI.resetNick( target );
@@ -122,6 +123,11 @@ public class UnnickCommand extends BukkitCommand {
             haoUser.setNickedSkinValue( null );
             haoUser.setNickedSkinSignature( null );
             haoUser.setNickedGameProfile( null );
+        }
+
+        for ( String command : this.commandsConfig.getStringList( "commands.unnick_module.command_execution" ) ) {
+            if ( !command.equalsIgnoreCase( "none" ) )
+                target.performCommand( command );
         }
 
     }

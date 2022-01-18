@@ -1,4 +1,4 @@
-# HaoNick 4.1.3 by Haoshoku
+# HaoNick configuration by Haoshoku
 # Support: https://haoshoku.xyz/go/discord
 
 settings:
@@ -33,29 +33,45 @@ settings:
     # If you want to use the original format of bukkit, you can disable this option.
     broadcast_message_instead_of_format: true
   tab:
+    # FALSE: If people nick into a specific name, they need to write /fakerank for a fake prefix / suffix that can be edited in the fake_ranks.yml
+    # TRUE: If you set it to true, it will be like ranks.yml, it will be permission based. But the command /fakerank will be blocked instead.
+    fake_ranks_permission_based: false
     # HaoNick has an integrated scoreboard update timer. Could help for possible fixes. Restart is required.
     timer:
-      active: false
+      active: true
       # Default: 60 Every minute all of the players scoreboard are gonna be refreshed. Decreasing this value may cause performance problems.
       update_interval: 60
-    # HaoNick will get the players scoreboard if a new scoreboard has been created by another plugins. If not, he will create a new scoreboard.
-    # If you want to use the main scoreboard, set it to false
-    new_scoreboard: true
     # If HaoNick has problems with scoreboard handling, you can increase the value.
     # Perhaps after increasing this value, it may work with another scoreboard plugins
     # In ticks!
     # 1 second = 20 Ticks
     scoreboard_creation_time: 10
+    # Should scoreboard packets be sent async?
+    async: true
     # You can use the tab header and footer created by HaoNick. Of course you can disable it.
     # Credits for 1.8.8 method belongs to Zay.
     # Compatible with PlaceholderAPI.
     # Supported: %online% for online players, %maxPlayers% for max players and %name% for players name.
     header_and_footer:
-      active: true
-      header: "§aYour header can be edited within settings.yml of HaoNick folder"
-      footer: "§cYour footer can be edited within settings.yml of HaoNick folder"
+      active: false
+      header: "&aYour header can be edited within settings.yml of HaoNick folder"
+      footer: "&cYour footer can be edited within settings.yml of HaoNick folder"
       # Header and footer will be updated every 10 minutes (default).
       # You can decrease this value if you want to add compatibility with other plugins.
       update_interval: 600
+  death_message:
+    active: false
+    text:
+      dead: 'Player %player% died'
+      killed_by_player: 'Player %player% was killed by %killer%'
+  action_bar:
+    active: false
+    permanent: true
+    text:
+      permanent: '&cName: &c%name%'
+      while_nicked: '&cYou are currently nicked as &e%name%'
+    update_interval: 20
+    worlds:
+      - world
   # Set this to false if you have problems with PlaceHolderAPI & HaoNick.
   placeholder_support: true
