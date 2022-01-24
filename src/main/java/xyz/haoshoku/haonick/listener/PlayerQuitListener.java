@@ -12,7 +12,7 @@ import xyz.haoshoku.nick.api.NickAPI;
 
 public class PlayerQuitListener implements Listener {
 
-    private HaoNick plugin;
+    private final HaoNick plugin;
 
     public PlayerQuitListener() {
         this.plugin = HaoNick.getPlugin();
