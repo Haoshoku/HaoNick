@@ -233,7 +233,9 @@ public class HaoConfigUpdaterHandler {
         this.settingsYMLConfig.add( this.getConfigValue( "settings.action_bar.text.permanent", "&cName: &c%name%" ) );
         this.settingsYMLConfig.add( this.getConfigValue( "settings.action_bar.text.while_nicked", "&cYou are currently nicked as &e%name%" ) );
         this.settingsYMLConfig.add( this.getConfigValue( "settings.action_bar.update_interval", 20 ) );
-        this.settingsYMLConfig.add( this.getConfigValue( "settings.action_bar.worlds", Arrays.asList( "world" ) ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.action_bar.worlds", Collections.singletonList( "world" ) ) );
+
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.blacklisted_worlds", Collections.singletonList( "yourWorldNameHere" ) ) );
 
         this.settingsYMLConfig.add( this.getConfigValue( "settings.placeholder_support", true ) );
     }
@@ -296,7 +298,7 @@ public class HaoConfigUpdaterHandler {
         List<Map<String, Object>> settingsYMLConfigCopyList = new LinkedList<>( this.settingsYMLConfig );
         List<String> bypassList = Arrays.asList( "settings", "settings.keep_nick", "settings.keep_nick.data",
                 "settings.keep_nick.mysql", "settings.chat", "settings.tab", "settings.tab.timer", "settings.tab.header_and_footer",
-                "settings.action_bar", "settings.action_bar.text", "settings.death_message", "settings.death_message.text" );
+                "settings.action_bar", "settings.action_bar.text", "settings.death_message", "settings.death_message.text", "settings.blacklisted_worlds" );
         for ( Map<String, Object> map : settingsYMLConfigCopyList ) {
             for ( String key : map.keySet() ) {
                 if ( currentConfigList.contains( key ) ) {

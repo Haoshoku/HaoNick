@@ -73,5 +73,7 @@ settings:
     update_interval: 20
     worlds:
       - world
+  blacklisted_worlds:
+    - yourWorldNameHere
   # Set this to false if you have problems with PlaceHolderAPI & HaoNick.
   placeholder_support: true

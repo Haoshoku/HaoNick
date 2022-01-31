@@ -7,6 +7,7 @@ import xyz.haoshoku.haonick.HaoNick;
 import xyz.haoshoku.haonick.config.HaoConfig;
 import xyz.haoshoku.haonick.handler.HaoUserHandler;
 import xyz.haoshoku.haonick.user.HaoUser;
+import xyz.haoshoku.haonick.util.BlacklistedWorldUtils;
 import xyz.haoshoku.haonick.util.ErrorUtils;
 import xyz.haoshoku.haonick.util.PlaceholderUtils;
 import xyz.haoshoku.nick.api.NickAPI;
@@ -22,7 +23,7 @@ public class ScoreboardHandling {
     private static boolean LIMIT;
 
     static {
-        switch ( VERSION.toLowerCase() ) {
+        switch ( VERSION ) {
             case "v1_8_R3": case "v1_9_R1": case "v1_10_R1": case "v1_11_R1": case "v1_12_R1":
                 ScoreboardHandling.LIMIT = true;
                 break;
@@ -60,6 +61,8 @@ public class ScoreboardHandling {
         for ( Player player : Bukkit.getOnlinePlayers() ) {
             if ( !ScoreboardHandling.PLAYER_SCOREBOARD_MAP.containsKey( player.getUniqueId() ) )
                 ScoreboardHandling.PLAYER_SCOREBOARD_MAP.put( player.getUniqueId(), new PlayerScoreboard() );
+
+            if ( BlacklistedWorldUtils.isInABlacklistedWorld( player ) ) continue;
 
             PlayerScoreboard playerScoreboard = ScoreboardHandling.PLAYER_SCOREBOARD_MAP.get( player.getUniqueId() );
 
@@ -115,6 +118,7 @@ public class ScoreboardHandling {
                             ScoreboardHandling.generateScoreboardData( player, defaultRankWeight, defaultPlayer, playerScoreboard, ranksConfig, defaultRank );
                             ScoreboardHandling.setPlayerListName( NickAPI.getPlayerOfOriginalName( defaultPlayer ), false, defaultRank );
                         }
+
                     }
                 }
             }
@@ -129,6 +133,7 @@ public class ScoreboardHandling {
                     for ( String name : nickedNames ) {
                         Player online = NickAPI.getPlayerOfNickedName( name );
                         if ( online == null || !online.isOnline() ) continue;
+                        if ( BlacklistedWorldUtils.isInABlacklistedWorld( online ) ) continue;
                         HaoUser user = HaoUserHandler.getUser( online );
 
                         String scoreboardName = null;
@@ -309,9 +314,10 @@ public class ScoreboardHandling {
             else
                 collection = (Collection<String>) scoreboardTeam.getClass().getMethod( "getPlayerNameSet" ).invoke( scoreboardTeam );
 
-            collection.add( playerName );
+
             Player playerObject = NickAPI.getPlayerOfOriginalName( playerName );
-            if ( playerObject != null && playerObject.isOnline() ) {
+            if ( playerObject != null && playerObject.isOnline() && !BlacklistedWorldUtils.isInABlacklistedWorld( playerObject ) ) {
+                collection.add( playerName );
                 Object packet1 = ScoreboardHandling.getPacketPlayOutScoreboardTeamPacket( scoreboardTeam, 1 );
                 Object packet2 = ScoreboardHandling.getPacketPlayOutScoreboardTeamPacket( scoreboardTeam, 0 );
 
@@ -433,7 +439,7 @@ public class ScoreboardHandling {
             rank = HaoNick.getPlugin().getConfigManager().getRanksConfig().getMessage( "ranks." + rankGroup + ".tab.player_list_name", player ).replace( "%name%", NickAPI.getName( player ) ).replace( "%player%", NickAPI.getName( player ) );
 
 
-        if ( rank != null && !rank.equalsIgnoreCase( "none" ) && !rank.equalsIgnoreCase( "" ) )
+        if ( !rank.equalsIgnoreCase( "none" ) && !rank.equalsIgnoreCase( "" ) )
             player.setPlayerListName( rank );
     }
 

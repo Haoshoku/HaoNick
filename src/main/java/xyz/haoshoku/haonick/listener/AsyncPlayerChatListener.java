@@ -11,6 +11,7 @@ import xyz.haoshoku.haonick.HaoNick;
 import xyz.haoshoku.haonick.config.HaoConfig;
 import xyz.haoshoku.haonick.handler.HaoUserHandler;
 import xyz.haoshoku.haonick.user.HaoUser;
+import xyz.haoshoku.haonick.util.BlacklistedWorldUtils;
 import xyz.haoshoku.haonick.util.ErrorUtils;
 import xyz.haoshoku.haonick.util.PatternUtils;
 import xyz.haoshoku.haonick.util.PlaceholderUtils;
@@ -23,7 +24,7 @@ public class AsyncPlayerChatListener implements Listener {
         Player player = event.getPlayer();
         HaoUser user = HaoUserHandler.getUser( player );
 
-        if ( event.isCancelled() ) return;
+        if ( event.isCancelled() || BlacklistedWorldUtils.isInABlacklistedWorld( player ) ) return;
 
         HaoConfig fakeRanksConfig = HaoNick.getPlugin().getConfigManager().getFakeRanksConfig();
         HaoConfig ranksConfig = HaoNick.getPlugin().getConfigManager().getRanksConfig();
