@@ -75,5 +75,8 @@ settings:
       - world
   blacklisted_worlds:
     - yourWorldNameHere
+  # By setting it to true,
+  # HaoNicks placeholder %haonick_rank_prefix%, %haonick_rank_suffix% will access to the prefix, suffix of LuckPerms
+  luckperms_support: false
   # Set this to false if you have problems with PlaceHolderAPI & HaoNick.
   placeholder_support: true

@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import xyz.haoshoku.haonick.scoreboard.ScoreboardHandling;
 import xyz.haoshoku.haonick.util.NickUtils;
 import xyz.haoshoku.nick.api.NickAPI;

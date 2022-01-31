@@ -1,12 +1,21 @@
 package xyz.haoshoku.haonick.handler;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import xyz.haoshoku.haonick.HaoNick;
+import xyz.haoshoku.haonick.util.ErrorUtils;
 import xyz.haoshoku.nick.api.NickAPI;
 
 public class PlaceholderAPIHandler extends PlaceholderExpansion {
+
+    private LuckPermsHandler handler;
+
+    public PlaceholderAPIHandler() {
+        if ( Bukkit.getPluginManager().getPlugin( "LuckPerms" ) != null )
+            this.handler = new LuckPermsHandler();
+    }
 
     @Override
     public @NotNull String getIdentifier() {
@@ -29,6 +38,7 @@ public class PlaceholderAPIHandler extends PlaceholderExpansion {
             return "";
 
         String fakeRank = HaoUserHandler.getUser( player ).getFakeRank();
+        String rank = HaoUserHandler.getUser( player ).getRank();
         switch ( params.toLowerCase() ) {
             case "original_name": case "originalname":
                 return NickAPI.getOriginalName( player );
@@ -45,18 +55,37 @@ public class PlaceholderAPIHandler extends PlaceholderExpansion {
             case "uuid":
                 return String.valueOf( NickAPI.getUniqueId( player ) );
 
-            case "fake_rank": case "fakerank":
+            case "rank": case "fake_rank": case "fakerank":
                 return fakeRank == null ? "null" : fakeRank;
 
-            case "fake_rank_prefix": case "fankrank_prefix": case "fakerankprefix":
-                return fakeRank == null ? "null" : HaoNick.getPlugin().getConfigManager().getFakeRanksConfig().getString( "fake_ranks." + fakeRank + ".tab.prefix" );
+            case "rank_prefix": case "rankprefix": case "fakerank_prefix": case "fake_rank_prefix": case "fakerankprefix": {
+                if ( NickAPI.isNicked( player ) )
+                    return fakeRank == null ? "" : HaoNick.getPlugin().getConfigManager().getFakeRanksConfig().getString( "fake_ranks." + fakeRank + ".tab.prefix" );
+                else if ( !HaoNick.getPlugin().getConfigManager().getSettingsConfig().getBoolean( "settings.luckperms_support" ) )
+                    return rank == null ? "" : HaoNick.getPlugin().getConfigManager().getRanksConfig().getString( "ranks." + rank + ".tab.prefix" );
+                else if ( handler != null )
+                    return this.handler.applyLuckPermsData( player, "prefix" );
+                else
+                    ErrorUtils.err( "You have enabled LuckPerms support in your settings.yml but you do not have installed LuckPerms. Logic?" );
+                    return "";
+            }
 
-            case "fake_rank_suffix": case "fakerank_suffix": case "fakeranksuffix":
-                return fakeRank == null ? "null" : HaoNick.getPlugin().getConfigManager().getFakeRanksConfig().getString( "fake_ranks." + fakeRank + ".tab.suffix" );
+            case "rank_suffix": case "ranksuffix": case "fakerank_suffix": case "fake_rank_suffix": case "fakeranksuffix": {
+                if ( NickAPI.isNicked( player ) )
+                    return fakeRank == null ? "" : HaoNick.getPlugin().getConfigManager().getFakeRanksConfig().getString( "fake_ranks." + fakeRank + ".tab.suffix" );
+                else if ( !HaoNick.getPlugin().getConfigManager().getSettingsConfig().getBoolean( "settings.luckperms_support" ) )
+                    return rank == null ? "" : HaoNick.getPlugin().getConfigManager().getRanksConfig().getString( "ranks." + rank + ".tab.suffix" );
+                else if ( handler != null )
+                    return this.handler.applyLuckPermsData( player, "suffix" );
+                else
+                    ErrorUtils.err( "You have enabled LuckPerms support in your settings.yml but you do not have installed LuckPerms. Logic?" );
+                return "";
+            }
         }
 
         return super.onPlaceholderRequest( player, params );
     }
+
 
 
 }

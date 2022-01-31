@@ -236,6 +236,7 @@ public class HaoConfigUpdaterHandler {
         this.settingsYMLConfig.add( this.getConfigValue( "settings.action_bar.worlds", Collections.singletonList( "world" ) ) );
 
         this.settingsYMLConfig.add( this.getConfigValue( "settings.blacklisted_worlds", Collections.singletonList( "yourWorldNameHere" ) ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.luckperms_support", false ) );
 
         this.settingsYMLConfig.add( this.getConfigValue( "settings.placeholder_support", true ) );
     }
