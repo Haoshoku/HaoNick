@@ -138,10 +138,6 @@ public class NickCommand extends BukkitCommand {
             return false;
         }
 
-        if ( NickAPI.nickExists( name ) ) {
-            MsgUtils.sendMessage( player, this.messagesConfig.getMessage( "messages.commands.nick_module.nick_exists", player ).replace( "%name%", name ) );
-            return false;
-        }
 
         List<String> blackListRenewal = new LinkedList<>( this.blackList );
 

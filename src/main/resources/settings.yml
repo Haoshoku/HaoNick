@@ -80,3 +80,5 @@ settings:
   luckperms_support: false
   # Set this to false if you have problems with PlaceHolderAPI & HaoNick.
   placeholder_support: true
+  # If enabled, HaoNick will throw an error if an error happens. Highly recommended enabling it.
+  error_log: true

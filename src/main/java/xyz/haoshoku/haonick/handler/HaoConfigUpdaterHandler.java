@@ -239,6 +239,7 @@ public class HaoConfigUpdaterHandler {
         this.settingsYMLConfig.add( this.getConfigValue( "settings.luckperms_support", false ) );
 
         this.settingsYMLConfig.add( this.getConfigValue( "settings.placeholder_support", true ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.error_log", true ) );
     }
 
     private void updateCommands() {

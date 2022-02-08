@@ -4,7 +4,6 @@ import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import xyz.haoshoku.haonick.util.ErrorUtils;
 
 public class LuckPermsHandler {
 
@@ -26,10 +25,8 @@ public class LuckPermsHandler {
             value = this.api.getUserManager().getUser( player.getUniqueId() )
                     .getCachedData().getMetaData().getSuffix();
 
-        if ( value == null ) {
-            ErrorUtils.err( "No " + key + " found in " + player.getName() + "'s group" );
+        if ( value == null )
             return "";
-        }
 
         return value;
     }
