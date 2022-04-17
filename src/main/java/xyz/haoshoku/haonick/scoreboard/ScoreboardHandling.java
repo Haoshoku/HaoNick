@@ -438,7 +438,6 @@ public class ScoreboardHandling {
         else
             rank = HaoNick.getPlugin().getConfigManager().getRanksConfig().getMessage( "ranks." + rankGroup + ".tab.player_list_name", player ).replace( "%name%", NickAPI.getName( player ) ).replace( "%player%", NickAPI.getName( player ) );
 
-
         if ( !rank.equalsIgnoreCase( "none" ) && !rank.equalsIgnoreCase( "" ) )
             player.setPlayerListName( rank );
     }
