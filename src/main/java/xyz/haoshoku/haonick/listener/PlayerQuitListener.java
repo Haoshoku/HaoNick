@@ -2,7 +2,6 @@ package xyz.haoshoku.haonick.listener;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import xyz.haoshoku.haonick.HaoNick;
@@ -19,7 +18,7 @@ public class PlayerQuitListener implements Listener {
         this.plugin = HaoNick.getPlugin();
     }
 
-    @EventHandler( priority = EventPriority.LOWEST )
+    @EventHandler
     public void onQuit( PlayerQuitEvent event ) {
         Player player = event.getPlayer();
         HaoUser user = HaoUserHandler.getUser( player );

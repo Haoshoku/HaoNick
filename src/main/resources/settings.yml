@@ -32,6 +32,8 @@ settings:
     # It is good for plugins which is incompatible with the format of NickAPI.
     # If you want to use the original format of bukkit, you can disable this option.
     broadcast_message_instead_of_format: true
+    # Set this to true, if you are using another chat plugin that uses the displayname and want to take the prefix, name and suffix to the other plugin.
+    display_name: false
   tab:
     # FALSE: If people nick into a specific name, they need to write /fakerank for a fake prefix / suffix that can be edited in the fake_ranks.yml
     # TRUE: If you set it to true, it will be like ranks.yml, it will be permission based. But the command /fakerank will be blocked instead.

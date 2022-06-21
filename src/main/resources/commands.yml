@@ -13,7 +13,7 @@ commands:
     chatcolor_permission: 'haonick.chatcolor'
     min_length: 3
     cooldown: 5
-    uuid: true
+    uuid: false
     tag: true
     skin: false
     game_profile_change: false
@@ -100,7 +100,7 @@ commands:
     cooldown_bypass_permission: 'haonick.randomnick.bypass'
     change_another_player_permission: 'haonick.randomnick.others'
     cooldown: 5
-    uuid: true
+    uuid: false
     tag: true
     skin: true
     game_profile_change: false

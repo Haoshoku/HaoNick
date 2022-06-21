@@ -57,6 +57,7 @@ public class ScoreboardHandling {
     public static void updateNamesFromScoreboard() {
         HaoConfig ranksConfig = HaoNick.getPlugin().getConfigManager().getRanksConfig();
         HaoConfig fakeRanksConfig = HaoNick.getPlugin().getConfigManager().getFakeRanksConfig();
+        HaoConfig settingsConfig = HaoNick.getPlugin().getConfigManager().getSettingsConfig();
 
         for ( Player player : Bukkit.getOnlinePlayers() ) {
             if ( !ScoreboardHandling.PLAYER_SCOREBOARD_MAP.containsKey( player.getUniqueId() ) )
@@ -112,6 +113,7 @@ public class ScoreboardHandling {
                                 ErrorUtils.err( "§cDefault rank does not exist in ranks.yml. Select a rank in ranks.yml and add default: true as an entry" );
                                 break;
                             }
+                            if ( NickAPI.getPlayerOfOriginalName( defaultPlayer ) == null ) continue;
                             HaoUserHandler.getUser( NickAPI.getPlayerOfOriginalName( defaultPlayer ) ).setRank( defaultRank );
 
                             if ( !ranksActiveTab ) continue;
@@ -172,7 +174,10 @@ public class ScoreboardHandling {
 
                                 String prefix = ScoreboardHandling.getTabEntry( online, fakeRanksConfig, "fake_ranks." + fakeRank + ".tab.prefix" );
                                 String suffix = ScoreboardHandling.getTabEntry( online, fakeRanksConfig, "fake_ranks." + fakeRank + ".tab.suffix" );
-                                online.setDisplayName( prefix + NickAPI.getName( online ) + suffix );
+
+                                if ( settingsConfig.getBoolean( "settings.chat.display_name" ) )
+                                    online.setDisplayName( prefix + NickAPI.getName( online ) + suffix );
+
                                 ScoreboardHandling.applyScoreboardData( player, scoreboardName, fakeRank, prefix, suffix, fakeRanksConfig );
                                 user.setFakeRank( fakeRank );
                             }
@@ -185,7 +190,10 @@ public class ScoreboardHandling {
 
                                 String prefix = ScoreboardHandling.getTabEntry( online, fakeRanksConfig, "fake_ranks." + defaultRank + ".tab.prefix" );
                                 String suffix = ScoreboardHandling.getTabEntry( online, fakeRanksConfig, "fake_ranks." + defaultRank + ".tab.suffix" );
-                                online.setDisplayName( prefix + NickAPI.getName( online ) + suffix );
+
+                                if ( settingsConfig.getBoolean( "settings.chat.display_name" ) )
+                                    online.setDisplayName( prefix + NickAPI.getName( online ) + suffix );
+
                                 ScoreboardHandling.applyScoreboardData( player, scoreboardName, defaultRank, prefix, suffix, fakeRanksConfig );
                                 user.setFakeRank( defaultRank );
 
@@ -200,7 +208,8 @@ public class ScoreboardHandling {
                                 try {
                                     Collection<String> collection;
 
-                                    if ( ScoreboardHandling.VERSION.equalsIgnoreCase( "v1_18_R1" ) )
+                                    if ( ScoreboardHandling.VERSION.equalsIgnoreCase( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" )
+                                        || ScoreboardHandling.VERSION.equals( "v1_19_R1" ) )
                                         collection = (Collection<String>) scoreboardTeam.getClass().getMethod( "g" ).invoke( scoreboardTeam );
                                     else
                                         collection = (Collection<String>) scoreboardTeam.getClass().getMethod( "getPlayerNameSet" ).invoke( scoreboardTeam );
@@ -290,11 +299,12 @@ public class ScoreboardHandling {
         if ( scoreboardName.length() > 16 )
             scoreboardName = scoreboardName.substring( 0, 16 );
 
-
-
         playerScoreboard.addTeam( scoreboardName );
-        playerScoreboard.setPrefix( scoreboardName, ScoreboardHandling.getTabEntry( NickAPI.getPlayerOfOriginalName( playerName ), ranksConfig, "ranks." + rank + ".tab.prefix" ) );
-        playerScoreboard.setSuffix( scoreboardName, ScoreboardHandling.getTabEntry( NickAPI.getPlayerOfOriginalName( playerName ), ranksConfig, "ranks." + rank + ".tab.suffix" ) );
+
+        String prefix = ScoreboardHandling.getTabEntry( NickAPI.getPlayerOfOriginalName( playerName ), ranksConfig, "ranks." + rank + ".tab.prefix" );
+        String suffix = ScoreboardHandling.getTabEntry( NickAPI.getPlayerOfOriginalName( playerName ), ranksConfig, "ranks." + rank + ".tab.suffix" );
+        playerScoreboard.setPrefix( scoreboardName, prefix );
+        playerScoreboard.setSuffix( scoreboardName, suffix );
 
         try {
             try {
@@ -309,7 +319,7 @@ public class ScoreboardHandling {
             Object scoreboardTeam = playerScoreboard.getScoreboardTeam( scoreboardName );
             Collection<String> collection;
 
-            if ( ScoreboardHandling.VERSION.equalsIgnoreCase( "v1_18_R1" ) )
+            if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" ) || ScoreboardHandling.VERSION.equals( "v1_19_R1" ) )
                 collection = (Collection<String>) scoreboardTeam.getClass().getMethod( "g" ).invoke( scoreboardTeam );
             else
                 collection = (Collection<String>) scoreboardTeam.getClass().getMethod( "getPlayerNameSet" ).invoke( scoreboardTeam );
@@ -318,6 +328,10 @@ public class ScoreboardHandling {
             Player playerObject = NickAPI.getPlayerOfOriginalName( playerName );
             if ( playerObject != null && playerObject.isOnline() && !BlacklistedWorldUtils.isInABlacklistedWorld( playerObject ) ) {
                 collection.add( playerName );
+
+                if ( HaoNick.getPlugin().getConfigManager().getSettingsConfig().getBoolean( "settings.chat.display_name" ) )
+                    playerObject.setDisplayName( prefix + NickAPI.getName( playerObject ) + suffix );
+
                 Object packet1 = ScoreboardHandling.getPacketPlayOutScoreboardTeamPacket( scoreboardTeam, 1 );
                 Object packet2 = ScoreboardHandling.getPacketPlayOutScoreboardTeamPacket( scoreboardTeam, 0 );
 
@@ -331,7 +345,8 @@ public class ScoreboardHandling {
     }
 
     private static Object getPacketPlayOutScoreboardTeamPacket( Object scoreboardTeam, int id ) {
-        if ( !ScoreboardHandling.VERSION.equals( "v1_17_R1" ) && !ScoreboardHandling.VERSION.equals( "v1_18_R1" ) ) {
+        if ( !ScoreboardHandling.VERSION.equals( "v1_17_R1" ) && !ScoreboardHandling.VERSION.equals( "v1_18_R1" ) && !ScoreboardHandling.VERSION.equals( "v1_18_R2" )
+                && !ScoreboardHandling.VERSION.equals( "v1_19_R1" ) ) {
             try {
                 Class<?> clazz = Class.forName( "net.minecraft.server." + ScoreboardHandling.VERSION + ".PacketPlayOutScoreboardTeam" );
                 return clazz.getConstructor( scoreboardTeam.getClass(), int.class ).newInstance( scoreboardTeam, id );
@@ -369,7 +384,7 @@ public class ScoreboardHandling {
             Method sendPacketMethod;
 
 
-            if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) ) {
+            if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" ) || ScoreboardHandling.VERSION.equals( "v1_19_R1" )) {
                 playerConnectionInstance = entityPlayerInstance.getClass().getField( "b" ).get( entityPlayerInstance );
                 sendPacketMethod = playerConnectionInstance.getClass().getMethod( "a", Class.forName( "net.minecraft.network.protocol.Packet" ) );
             } else if ( !ScoreboardHandling.VERSION.equals( "v1_17_R1" ) ) {
@@ -418,7 +433,7 @@ public class ScoreboardHandling {
     private static void setColor( Object scoreboardTeam, ChatColor color ) {
         try {
             Class<?> craftChatMessageClass = Class.forName( "org.bukkit.craftbukkit." + ScoreboardHandling.VERSION + ".util.CraftChatMessage" );
-            if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) )
+            if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" ) || ScoreboardHandling.VERSION.equals( "v1_19_R1" ) )
                 scoreboardTeam.getClass().getMethod( "a", Class.forName( "net.minecraft.EnumChatFormat" ) )
                         .invoke( scoreboardTeam, craftChatMessageClass.getMethod( "getColor", ChatColor.class ).invoke( craftChatMessageClass, color ) );
             else if ( !ScoreboardHandling.VERSION.equals( "v1_17_R1" ) )
@@ -437,6 +452,7 @@ public class ScoreboardHandling {
             rank = HaoNick.getPlugin().getConfigManager().getFakeRanksConfig().getMessage( "fake_ranks." + rankGroup + ".tab.player_list_name", player ).replace( "%name%", NickAPI.getName( player ) ).replace( "%player%", NickAPI.getName( player ) );
         else
             rank = HaoNick.getPlugin().getConfigManager().getRanksConfig().getMessage( "ranks." + rankGroup + ".tab.player_list_name", player ).replace( "%name%", NickAPI.getName( player ) ).replace( "%player%", NickAPI.getName( player ) );
+
 
         if ( !rank.equalsIgnoreCase( "none" ) && !rank.equalsIgnoreCase( "" ) )
             player.setPlayerListName( rank );

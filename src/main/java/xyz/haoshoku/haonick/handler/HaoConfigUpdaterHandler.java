@@ -32,7 +32,7 @@ public class HaoConfigUpdaterHandler {
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.chatcolor_permission", "haonick.chatcolor" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.min_length", 3 ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.cooldown", 5 ) );
-        this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.uuid", true ) );
+        this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.uuid", false ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.tag", true ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.skin", false ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.nick_module.game_profile_change", false ) );
@@ -95,7 +95,7 @@ public class HaoConfigUpdaterHandler {
         this.commandsYMLConfig.add( this.getConfigValue( "commands.random_nick_module.cooldown_bypass_permission", "haonick.randomnick.bypass" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.random_nick_module.change_another_player_permission", "haonick.randomnick.others" ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.random_nick_module.cooldown", 5 ) );
-        this.commandsYMLConfig.add( this.getConfigValue( "commands.random_nick_module.uuid", true ) );
+        this.commandsYMLConfig.add( this.getConfigValue( "commands.random_nick_module.uuid", false ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.random_nick_module.tag", true ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.random_nick_module.skin", true ) );
         this.commandsYMLConfig.add( this.getConfigValue( "commands.random_nick_module.game_profile_change", false ) );
@@ -194,6 +194,7 @@ public class HaoConfigUpdaterHandler {
         this.messagesYMLConfig.add( this.getConfigValue( "messages.commands.fake_rank_module.target_not_online", "%prefix% &cThis player is not online" ) );
         this.messagesYMLConfig.add( this.getConfigValue( "messages.commands.fake_rank_module.player_changes_target", "%prefix% &aSuccessfully changed fake rank of &e%target%" ) );
         this.messagesYMLConfig.add( this.getConfigValue( "messages.commands.fake_rank_module.target_gets_changed", "%prefix% &cYour fake rank has been updated" ) );
+        this.messagesYMLConfig.add( this.getConfigValue( "messages.commands.fake_rank_module.command_blocked", "%prefix% &cThis command is blocked'" ) );
     }
 
     private void initializeSettingsYML() {
@@ -214,6 +215,7 @@ public class HaoConfigUpdaterHandler {
         this.settingsYMLConfig.add( this.getConfigValue( "settings.keep_nick.mysql.password", "password" ) );
         this.settingsYMLConfig.add( this.getConfigValue( "settings.keep_nick.mysql.table_name", "nick" ) );
         this.settingsYMLConfig.add( this.getConfigValue( "settings.chat.broadcast_message_instead_of_format", true ) );
+        this.settingsYMLConfig.add( this.getConfigValue( "settings.chat.display_name", false ) );
         this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.timer.active", true ) );
         this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.timer.update_interval", 60 ) );
         this.settingsYMLConfig.add( this.getConfigValue( "settings.tab.async", true ) );
