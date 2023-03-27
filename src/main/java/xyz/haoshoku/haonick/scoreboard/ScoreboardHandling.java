@@ -209,7 +209,7 @@ public class ScoreboardHandling {
                                     Collection<String> collection;
 
                                     if ( ScoreboardHandling.VERSION.equalsIgnoreCase( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" )
-                                        || ScoreboardHandling.VERSION.equals( "v1_19_R1" ) )
+                                        || ScoreboardHandling.VERSION.equals( "v1_19_R3" ) )
                                         collection = (Collection<String>) scoreboardTeam.getClass().getMethod( "g" ).invoke( scoreboardTeam );
                                     else
                                         collection = (Collection<String>) scoreboardTeam.getClass().getMethod( "getPlayerNameSet" ).invoke( scoreboardTeam );
@@ -319,7 +319,7 @@ public class ScoreboardHandling {
             Object scoreboardTeam = playerScoreboard.getScoreboardTeam( scoreboardName );
             Collection<String> collection;
 
-            if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" ) || ScoreboardHandling.VERSION.equals( "v1_19_R1" ) )
+            if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" ) || ScoreboardHandling.VERSION.equals( "v1_19_R3" ) )
                 collection = (Collection<String>) scoreboardTeam.getClass().getMethod( "g" ).invoke( scoreboardTeam );
             else
                 collection = (Collection<String>) scoreboardTeam.getClass().getMethod( "getPlayerNameSet" ).invoke( scoreboardTeam );
@@ -346,7 +346,7 @@ public class ScoreboardHandling {
 
     private static Object getPacketPlayOutScoreboardTeamPacket( Object scoreboardTeam, int id ) {
         if ( !ScoreboardHandling.VERSION.equals( "v1_17_R1" ) && !ScoreboardHandling.VERSION.equals( "v1_18_R1" ) && !ScoreboardHandling.VERSION.equals( "v1_18_R2" )
-                && !ScoreboardHandling.VERSION.equals( "v1_19_R1" ) ) {
+                && !ScoreboardHandling.VERSION.equals( "v1_19_R3" ) ) {
             try {
                 Class<?> clazz = Class.forName( "net.minecraft.server." + ScoreboardHandling.VERSION + ".PacketPlayOutScoreboardTeam" );
                 return clazz.getConstructor( scoreboardTeam.getClass(), int.class ).newInstance( scoreboardTeam, id );
@@ -384,7 +384,7 @@ public class ScoreboardHandling {
             Method sendPacketMethod;
 
 
-            if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" ) || ScoreboardHandling.VERSION.equals( "v1_19_R1" )) {
+            if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" ) || ScoreboardHandling.VERSION.equals( "v1_19_R3" )) {
                 playerConnectionInstance = entityPlayerInstance.getClass().getField( "b" ).get( entityPlayerInstance );
                 sendPacketMethod = playerConnectionInstance.getClass().getMethod( "a", Class.forName( "net.minecraft.network.protocol.Packet" ) );
             } else if ( !ScoreboardHandling.VERSION.equals( "v1_17_R1" ) ) {
@@ -433,7 +433,7 @@ public class ScoreboardHandling {
     private static void setColor( Object scoreboardTeam, ChatColor color ) {
         try {
             Class<?> craftChatMessageClass = Class.forName( "org.bukkit.craftbukkit." + ScoreboardHandling.VERSION + ".util.CraftChatMessage" );
-            if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" ) || ScoreboardHandling.VERSION.equals( "v1_19_R1" ) )
+            if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" ) || ScoreboardHandling.VERSION.equals( "v1_19_R3" ) )
                 scoreboardTeam.getClass().getMethod( "a", Class.forName( "net.minecraft.EnumChatFormat" ) )
                         .invoke( scoreboardTeam, craftChatMessageClass.getMethod( "getColor", ChatColor.class ).invoke( craftChatMessageClass, color ) );
             else if ( !ScoreboardHandling.VERSION.equals( "v1_17_R1" ) )

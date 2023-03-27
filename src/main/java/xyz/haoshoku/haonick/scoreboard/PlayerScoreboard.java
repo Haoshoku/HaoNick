@@ -15,7 +15,7 @@ public class PlayerScoreboard {
 
         try {
             Class<?> scoreboardClass;
-            if ( !ScoreboardHandling.VERSION.equals( "v1_17_R1" ) && !ScoreboardHandling.VERSION.equals( "v1_18_R1" ) && !ScoreboardHandling.VERSION.equals( "v1_18_R2" ) && !ScoreboardHandling.VERSION.equals( "v1_19_R1" ))
+            if ( !ScoreboardHandling.VERSION.equals( "v1_17_R1" ) && !ScoreboardHandling.VERSION.equals( "v1_18_R1" ) && !ScoreboardHandling.VERSION.equals( "v1_18_R2" ) && !ScoreboardHandling.VERSION.equals( "v1_19_R3" ))
                 scoreboardClass = Class.forName( "net.minecraft.server." + ScoreboardHandling.VERSION + ".Scoreboard" );
             else
                 scoreboardClass = Class.forName( "net.minecraft.world.scores.Scoreboard" );
@@ -32,7 +32,7 @@ public class PlayerScoreboard {
         if ( !this.teamExists( team ) ) {
             try {
                 Class<?> scoreboardTeamClass;
-                if ( !ScoreboardHandling.VERSION.equals( "v1_17_R1" ) && !ScoreboardHandling.VERSION.equals( "v1_18_R1" ) && !ScoreboardHandling.VERSION.equals( "v1_18_R2" ) && !ScoreboardHandling.VERSION.equals( "v1_19_R1" ) )
+                if ( !ScoreboardHandling.VERSION.equals( "v1_17_R1" ) && !ScoreboardHandling.VERSION.equals( "v1_18_R1" ) && !ScoreboardHandling.VERSION.equals( "v1_18_R2" ) && !ScoreboardHandling.VERSION.equals( "v1_19_R3" ) )
                     scoreboardTeamClass = Class.forName( "net.minecraft.server." + ScoreboardHandling.VERSION + ".ScoreboardTeam" );
                 else
                     scoreboardTeamClass = Class.forName( "net.minecraft.world.scores.ScoreboardTeam" );
@@ -64,7 +64,7 @@ public class PlayerScoreboard {
                 }
 
                 case "v1_18_R1":
-                case "v1_19_R1":
+                case "v1_19_R3":
                 case "v1_18_R2": {
 
                     Class<?> iChatBaseComponentClass = Class.forName( "net.minecraft.network.chat.IChatBaseComponent" );
@@ -100,7 +100,7 @@ public class PlayerScoreboard {
                 }
 
                 case "v1_18_R1":
-                case "v1_19_R1":
+                case "v1_19_R3":
                 case "v1_18_R2": {
                     Class<?> iChatBaseComponentClass = Class.forName( "net.minecraft.network.chat.IChatBaseComponent" );
                     scoreboardTeam.getClass().getMethod( "c", iChatBaseComponentClass ).invoke( scoreboardTeam, PlayerScoreboard.getMessage( suffix ) );
@@ -122,7 +122,7 @@ public class PlayerScoreboard {
         for ( Object scoreboardTeam : this.teams ) {
             try {
                 String name;
-                if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" ) || ScoreboardHandling.VERSION.equals( "v1_19_R1" ))
+                if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" ) || ScoreboardHandling.VERSION.equals( "v1_19_R3" ))
                     name = (String) scoreboardTeam.getClass().getMethod( "b" ).invoke( scoreboardTeam );
                 else
                     name = (String) scoreboardTeam.getClass().getMethod( "getName" ).invoke( scoreboardTeam );
@@ -141,7 +141,7 @@ public class PlayerScoreboard {
         for ( Object scoreboardTeam : this.teams ) {
             try {
                 String loopName;
-                if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" ) || ScoreboardHandling.VERSION.equals( "v1_19_R1" ) )
+                if ( ScoreboardHandling.VERSION.equals( "v1_18_R1" ) || ScoreboardHandling.VERSION.equals( "v1_18_R2" ) || ScoreboardHandling.VERSION.equals( "v1_19_R3" ) )
                     loopName = (String) scoreboardTeam.getClass().getMethod( "b" ).invoke( scoreboardTeam );
                 else
                     loopName = (String) scoreboardTeam.getClass().getMethod( "getName" ).invoke( scoreboardTeam );
